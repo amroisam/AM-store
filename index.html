@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AM store | أناقة عصرية لكل يوم">
+  <title>AM store | أناقة عصرية لكل يوم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="main-header">
+  <a href="#hero" class="logo" aria-label="AM store">
+    <img src="images/am-logo.png" alt="AM store" class="brand-logo">
+  </a>
+
+  <nav class="nav-links" aria-label="التنقل">
+    <a href="#hero">الرئيسية</a>
+    <a href="#categories">الأقسام</a>
+    <a href="#products">وصل حديثًا</a>
+    <a href="#exclusive">عروض حصرية</a>
+  </nav>
+
+  <button class="cart-btn" id="cartToggleBtn" type="button">
+    🛒 السلة <span class="cart-count" id="cartCount">0</span>
+  </button>
+</header>
+
+<main>
+  <section class="hero" id="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="badge">COLLECTION 2026</span>
+      <h1>AM store</h1>
+      <h2>أناقتك تبدأ من هنا</h2>
+      <p>قطع مختارة بعناية تجمع بين الأناقة والراحة بأسلوب عصري.</p>
+      <div class="hero-actions">
+        <a href="#products" class="btn-primary">اكتشف منتجاتنا</a>
+        <a href="#categories" class="btn-secondary">الأقسام الرئيسية</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="categories-section section-shell" id="categories">
+    <div class="section-heading">
+      <span>AM STORE COLLECTION</span>
+      <h2>أقسام AM store</h2>
+      <p>اختر القسم الذي تبحث عنه</p>
+    </div>
+
+    <div class="categories-grid">
+      <button class="category-card" data-category="clothes" type="button">
+        <div class="category-image clothes-bg">👕</div>
+        <h3>الملابس</h3>
+        <span>اكتشف المجموعة</span>
+      </button>
+      <button class="category-card" data-category="shoes" type="button">
+        <div class="category-image shoes-bg">👟</div>
+        <h3>الأحذية</h3>
+        <span>اكتشف المجموعة</span>
+      </button>
+      <button class="category-card" data-category="bags" type="button">
+        <div class="category-image bags-bg">👜</div>
+        <h3>الحقائب</h3>
+        <span>اكتشف المجموعة</span>
+      </button>
+      <button class="category-card" data-category="accessories" type="button">
+        <div class="category-image accessories-bg">✨</div>
+        <h3>الإكسسوارات</h3>
+        <span>اكتشف المجموعة</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="products-section section-shell" id="products">
+    <div class="section-heading">
+      <span>NEW ARRIVALS</span>
+      <h2 id="productsTitle">وصل حديثًا</h2>
+      <p id="productsSubtitle">منتجات أضيفت إلى متجر AM store</p>
+    </div>
+
+    <div class="filter-actions">
+      <button class="filter-btn active" data-filter="new" type="button">وصل حديثًا</button>
+      <button class="filter-btn" data-filter="all" type="button">كل المنتجات</button>
+      <button class="filter-btn" data-filter="clothes" type="button">الملابس</button>
+      <button class="filter-btn" data-filter="shoes" type="button">الأحذية</button>
+      <button class="filter-btn" data-filter="bags" type="button">الحقائب</button>
+      <button class="filter-btn" data-filter="accessories" type="button">الإكسسوارات</button>
+    </div>
+
+    <div class="products-grid" id="productsContainer"></div>
+  </section>
+
+  <section class="products-section section-shell" id="exclusive">
+    <div class="section-heading">
+      <span>EXCLUSIVE OFFERS</span>
+      <h2>عروض حصرية</h2>
+      <p>اختيارات مميزة وعروض خاصة من AM store</p>
+    </div>
+    <div class="products-grid" id="exclusiveProductsContainer"></div>
+  </section>
+
+  <section class="brand-story section-shell">
+    <div class="story-pattern"></div>
+    <div>
+      <span class="eyebrow">OUR IDENTITY</span>
+      <h2>أناقة نرتديها ونعيشها.</h2>
+      <p>في AM store نختار قطعنا بعناية ونقدمها بطريقة بسيطة ومريحة لتكمل إطلالتك.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="main-footer">
+  <div class="footer-logo">AM store</div>
+  <p>أناقتك تبدأ من هنا © 2026</p>
+</footer>
+
+<!-- اختيار المنتج -->
+<div class="modal-overlay" id="productModal" aria-hidden="true">
+  <div class="modal-content product-modal">
+    <button class="close-btn" id="closeProductModal" type="button">&times;</button>
+    <div id="productModalBody"></div>
+  </div>
+</div>
+
+<!-- السلة والفاتورة -->
+<div class="modal-overlay" id="cartModal" aria-hidden="true">
+  <div class="modal-content cart-modal">
+    <div class="modal-header">
+      <div>
+        <span class="eyebrow">YOUR ORDER</span>
+        <h2>سلة مشترياتي</h2>
+      </div>
+      <button class="close-btn" id="closeCartModal" type="button">&times;</button>
+    </div>
+
+    <div id="cartItems" class="cart-items-list"></div>
+
+    <div class="cart-summary">
+      <span>إجمالي الفاتورة</span>
+      <strong id="cartTotal">0 شيكل</strong>
+    </div>
+
+    <form id="checkoutForm" class="checkout-form">
+      <h3>بيانات صاحب الفاتورة</h3>
+      <label>
+        الاسم الكامل
+        <input type="text" id="customerName" required autocomplete="name" placeholder="اكتب الاسم الكامل">
+      </label>
+      <label>
+        رقم الهاتف
+        <input type="tel" id="customerPhone" required autocomplete="tel" placeholder="مثال: 059XXXXXXX">
+      </label>
+      <button type="submit" class="btn-primary full-btn">تأكيد الطلب عبر واتساب</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

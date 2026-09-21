@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AM store | لوحة تحكم صاحب المتجر</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { background: #F4EFE5; }
+    .admin-shell { width:min(1150px,92%); margin:40px auto 80px; }
+    .admin-top { display:flex; align-items:center; justify-content:space-between; gap:15px; margin-bottom:25px; }
+    .admin-top h1 { color:var(--navy); }
+    .admin-card { background:white; border:1px solid var(--border); border-radius:20px; padding:24px; box-shadow:var(--shadow); margin-bottom:20px; }
+    .admin-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+    .admin-field label { display:block; font-weight:700; color:var(--navy); margin-bottom:5px; }
+    .admin-field input, .admin-field select, .admin-field textarea {
+      width:100%; padding:11px; border:1px solid #CFC7BA; border-radius:9px; background:#FFFDF9; outline:none;
+    }
+    .admin-field input:focus, .admin-field select:focus, .admin-field textarea:focus { border-color:var(--gold); }
+    .full { grid-column:1/-1; }
+    .admin-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+    .admin-btn { border:0; border-radius:9px; padding:11px 18px; background:var(--navy); color:white; font-weight:800; }
+    .admin-btn.gold { background:var(--gold); color:var(--navy); }
+    .admin-btn.danger { background:#A61B1B; }
+    .category-tabs { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
+    .category-tab { border:1px solid #CFC7BA; background:#FFFDF9; color:var(--navy); border-radius:10px; padding:10px 16px; font-weight:800; cursor:pointer; }
+    .category-tab.active { background:var(--gold); border-color:var(--gold); }
+    .product-admin-list { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; }
+    .admin-product { border:1px solid var(--border); border-radius:15px; overflow:hidden; background:#FFFDF9; }
+    .admin-product img, .admin-product .no-img { width:100%; height:190px; object-fit:cover; display:grid; place-items:center; background:#E8E0D2; font-size:55px; }
+    .admin-product-info { padding:14px; }
+    .admin-product-info h3 { color:var(--navy); }
+    .admin-product-info p { font-size:13px; color:#667085; }
+    .admin-product-actions { display:flex; gap:7px; margin-top:10px; }
+    .admin-product-actions button { flex:1; border:1px solid #CFC7BA; background:white; border-radius:7px; padding:7px; font-weight:700; }
+    .login-box { width:min(430px,92%); margin:100px auto; }
+    .login-box h1 { color:var(--navy); text-align:center; margin-bottom:20px; }
+    .hidden { display:none !important; }
+    .admin-note { background:#FFF4D9; border-right:4px solid var(--gold); padding:12px; border-radius:8px; margin-bottom:18px; font-size:13px; }
+    @media(max-width:800px){ .admin-grid,.product-admin-list{grid-template-columns:1fr 1fr;} }
+    @media(max-width:550px){ .admin-grid,.product-admin-list{grid-template-columns:1fr;} .full{grid-column:auto;} .admin-top{align-items:flex-start; flex-direction:column;} }
+  </style>
+</head>
+<body>
+
+<section class="login-box admin-card" id="loginBox">
+  <img src="images/am-logo.png" alt="AM store" class="admin-brand-logo"><h1 style="margin-top:10px">لوحة صاحب المتجر</h1>
+  <div class="admin-field">
+    <label for="adminEmail">البريد الإلكتروني</label>
+    <input type="email" id="adminEmail" placeholder="البريد الإلكتروني" autocomplete="username" required>
+    <label for="adminPassword" style="display:block;margin-top:10px">كلمة المرور</label>
+    <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور" autocomplete="current-password" required>
+  </div>
+  <button class="admin-btn gold" style="width:100%;margin-top:14px" id="loginBtn">دخول</button>
+  <p id="loginError" style="color:#A61B1B;text-align:center;margin-top:10px"></p>
+</section>
+
+<main class="admin-shell hidden" id="adminPanel">
+  <div class="admin-top">
+    <div>
+      <span class="eyebrow">AM STORE ADMIN</span>
+      <h1>إدارة المنتجات والبضائع</h1>
+    </div>
+    <div class="admin-actions">
+      <a class="admin-btn" href="index.html" style="text-decoration:none">فتح المتجر</a>
+      <button class="admin-btn danger" id="logoutBtn">تسجيل الخروج</button>
+    </div>
+  </div>
+
+  <div class="admin-note">
+    هذه لوحة إدارة محمية بتسجيل دخول Supabase. لا تشارك بيانات الدخول مع أي شخص.
+  </div>
+
+  <section class="admin-card">
+    <h2 id="formTitle" style="color:var(--navy);margin-bottom:18px">إضافة منتج جديد</h2>
+    <form id="productForm">
+      <input type="hidden" id="editId">
+
+      <div class="admin-grid">
+        <div class="admin-field">
+          <label>اسم المنتج</label>
+          <input id="productName" required placeholder="مثال: جاكيت عصري">
+        </div>
+
+        <div class="admin-field">
+          <label>القسم</label>
+          <select id="productCategory" required>
+            <option value="clothes">الملابس</option>
+            <option value="shoes">الأحذية</option>
+            <option value="bags">الحقائب</option>
+            <option value="accessories">الإكسسوارات</option>
+          </select>
+        </div>
+
+        <div class="admin-field">
+          <label>السعر بالشيكل</label>
+          <input id="productPrice" type="number" min="0" step="0.01" required placeholder="150">
+        </div>
+
+        <div class="admin-field">
+          <label>الكمية المتوفرة</label>
+          <input id="productStock" type="number" min="0" step="1" required placeholder="10">
+        </div>
+
+        <div class="admin-field">
+          <label>المقاسات (افصل بينها بفاصلة)</label>
+          <input id="productSizes" placeholder="M,L,XL">
+        </div>
+
+        <div class="admin-field">
+          <label>الألوان (افصل بينها بفاصلة)</label>
+          <input id="productColors" placeholder="أسود,بيج,زيتي">
+        </div>
+
+        <div class="admin-field full">
+          <label>ظهور المنتج في المتجر</label>
+          <div style="display:flex;flex-wrap:wrap;gap:18px;padding:12px 0">
+            <label style="font-weight:600;display:flex;align-items:center;gap:8px"><input id="productNewArrival" type="checkbox" checked> وصل حديثًا</label>
+            <label style="font-weight:600;display:flex;align-items:center;gap:8px"><input id="productExclusiveOffer" type="checkbox"> عروض حصرية</label>
+          </div>
+        </div>
+
+        <div class="admin-field full">
+          <label>صورة المنتج</label>
+          <input id="productImage" type="file" accept="image/*">
+          <small style="color:#667085">يمكنك رفع صورة القطعة الحقيقية بعد تعديلها بالذكاء الاصطناعي.</small>
+        </div>
+      </div>
+
+      <div class="admin-actions">
+        <button class="admin-btn gold" type="submit" id="saveProductBtn">حفظ المنتج</button>
+        <button class="admin-btn" type="button" id="cancelEditBtn" style="display:none">إلغاء التعديل</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="admin-card">
+    <h2 style="color:var(--navy);margin-bottom:18px">المنتجات الحالية</h2>
+    <div class="category-tabs" id="categoryTabs" aria-label="أقسام المنتجات">
+      <button type="button" class="category-tab active" data-category="all">جميع المنتجات</button>
+      <button type="button" class="category-tab" data-category="clothes">الملابس</button>
+      <button type="button" class="category-tab" data-category="shoes">الأحذية</button>
+      <button type="button" class="category-tab" data-category="bags">الحقائب</button>
+      <button type="button" class="category-tab" data-category="accessories">الإكسسوارات</button>
+      <button type="button" class="category-tab" data-category="new">وصل حديثًا</button>
+      <button type="button" class="category-tab" data-category="exclusive">العروض الحصرية</button>
+    </div>
+    <div class="product-admin-list" id="adminProducts"></div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
