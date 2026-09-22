@@ -1,4 +1,6 @@
-const SUPABASE_URL = "https://uacnpssrurwhrshmsnja.supabase.co"; // ضع رابط مشروعك هنا
-const SUPABASE_ANON_KEY = "sb_publishable_0iqwsODpmzEwIGHeggqaUw_30lpY68V"; // ضع مفتاح anon هنا
+const SUPABASE_URL = "https://uacnpssrurwhrshmsnja.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_0iqwsODpmzEwIGHeggqaUw_30lpY68V";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+if (typeof supabase === 'undefined') {
+    var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
