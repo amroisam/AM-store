@@ -17,245 +17,312 @@ const defaultProducts = [
   {id:14,name:"سوار ساعات",category:"accessories",categoryName:"الإكسسوارات",price:70,stock:6,sizes:[],colors:[],image:"images/accessories/Watch copels.jpg"}
 ];
 
-// جلب العميل المعرف في config.js بشكل آمن
-const getDb = () => window.supabaseClient || window.supabase;
+// دالة جلب العميل المعرّف من config.js
+function getDb() {
+  return window.supabaseClient;
+}
 
 let products = [];
 let currentUser = null;
 let selectedCategory = "all";
 
-function categoryName(category) { return {clothes:"الملابس",shoes:"الأحذية",bags:"الحقائب",accessories:"الإكسسوارات"}[category] || "منتجات"; }
-function escapeHtml(value) { return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#039;"}[c])); }
-
-async function loadProducts() {
- const db = getDb();
- const {data,error} = await db.from("products").select("*").order("id",{ascending:true});
- if(error) throw error;
- return (data||[]).map(p=>({...p,categoryName:p.category_name||categoryName(p.category),newArrival:p.new_arrival ?? false,exclusiveOffer:p.exclusive_offer ?? false}));
+function categoryName(category) { 
+  return {clothes:"الملابس",shoes:"الأحذية",bags:"الحقائب",accessories:"الإكسسوارات"}[category] || "منتجات"; 
 }
 
-async function saveProductToDb(data,editId) {
- const db = getDb();
- const payload={name:data.name,category:data.category,category_name:data.categoryName,price:data.price,stock:data.stock,sizes:data.sizes,colors:data.colors,image:data.image,new_arrival:data.newArrival,exclusive_offer:data.exclusiveOffer,updated_at:new Date().toISOString()};
- const result=editId ? await db.from("products").update(payload).eq("id",Number(editId)) : await db.from("products").insert(payload);
- if(result.error) throw result.error;
+function escapeHtml(value) { 
+  return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#039;"}[c])); 
+}
+
+async function loadProducts() {
+  const db = getDb();
+  if(!db) throw new Error("لم يتم تهيئة Supabase");
+  const {data, error} = await db.from("products").select("*").order("id", {ascending: true});
+  if(error) throw error;
+  return (data || []).map(p => ({
+    ...p,
+    categoryName: p.category_name || categoryName(p.category),
+    newArrival: p.new_arrival ?? false,
+    exclusiveOffer: p.exclusive_offer ?? false
+  }));
+}
+
+async function saveProductToDb(data, editId) {
+  const db = getDb();
+  const payload = {
+    name: data.name,
+    category: data.category,
+    category_name: data.categoryName,
+    price: data.price,
+    stock: data.stock,
+    sizes: data.sizes,
+    colors: data.colors,
+    image: data.image,
+    new_arrival: data.newArrival,
+    exclusive_offer: data.exclusiveOffer,
+    updated_at: new Date().toISOString()
+  };
+  const result = editId 
+    ? await db.from("products").update(payload).eq("id", Number(editId)) 
+    : await db.from("products").insert(payload);
+  if(result.error) throw result.error;
 }
 
 async function uploadImage(file) {
- if(!file) return "";
- const db = getDb();
- const ext=(file.name.split(".").pop()||"jpg").toLowerCase();
- const path=`${crypto.randomUUID()}.${ext}`;
- const {error}=await db.storage.from("product-images").upload(path,file,{upsert:false,contentType:file.type});
- if(error) throw error;
- return db.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+  if(!file) return "";
+  const db = getDb();
+  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+  const path = `${crypto.randomUUID()}.${ext}`;
+  const {error} = await db.storage.from("product-images").upload(path, file, {upsert: false, contentType: file.type});
+  if(error) throw error;
+  return db.storage.from("product-images").getPublicUrl(path).data.publicUrl;
 }
 
 function showPanel() { 
- const loginBox = document.getElementById("loginBox");
- const adminPanel = document.getElementById("adminPanel");
- if (loginBox) loginBox.classList.add("hidden"); 
- if (adminPanel) adminPanel.classList.remove("hidden"); 
- renderAdminProducts(); 
+  const loginBox = document.getElementById("loginBox");
+  const adminPanel = document.getElementById("adminPanel");
+  if(loginBox) loginBox.classList.add("hidden"); 
+  if(adminPanel) adminPanel.classList.remove("hidden"); 
+  renderAdminProducts(); 
 }
 
 async function login() {
- const emailEl = document.getElementById("adminEmail");
- const passEl = document.getElementById("adminPassword");
- const errorBox = document.getElementById("loginError");
- 
- if (!emailEl || !passEl) return;
- const email = emailEl.value.trim();
- const password = passEl.value;
- if (errorBox) errorBox.textContent = "";
+  const emailEl = document.getElementById("adminEmail");
+  const passEl = document.getElementById("adminPassword");
+  const errorBox = document.getElementById("loginError");
+  
+  if(!emailEl || !passEl) return;
+  const email = emailEl.value.trim();
+  const password = passEl.value;
+  if(errorBox) errorBox.textContent = "";
 
- const db = getDb();
- if (!db) {
-     if (errorBox) errorBox.textContent = "تعذر الاتصال بقاعدة البيانات. تأكد من إعداد config.js بشكل صحيح.";
-     return;
- }
+  const db = getDb();
+  if(!db) {
+    if(errorBox) errorBox.textContent = "خطأ في الاتصال بقاعدة البيانات. تأكد من استدعاء config.js.";
+    return;
+  }
 
- try {
-     const {data, error} = await db.auth.signInWithPassword({email, password});
-     if (error) {
-         if (errorBox) errorBox.textContent = "بيانات الدخول غير صحيحة.";
-         return;
-     }
+  try {
+    const {data, error} = await db.auth.signInWithPassword({email, password});
+    if(error) {
+      if(errorBox) errorBox.textContent = "بيانات الدخول غير صحيحة.";
+      return;
+    }
 
-     const {data: adminRow} = await db.from("admin_users").select("user_id").eq("user_id", data.user.id).maybeSingle();
-     if (!adminRow) {
-         await db.auth.signOut();
-         if (errorBox) errorBox.textContent = "هذا الحساب غير مخول لإدارة المتجر.";
-         return;
-     }
+    const {data: adminRow} = await db.from("admin_users").select("user_id").eq("user_id", data.user.id).maybeSingle();
+    if(!adminRow) {
+      await db.auth.signOut();
+      if(errorBox) errorBox.textContent = "هذا الحساب غير مخول لإدارة المتجر.";
+      return;
+    }
 
-     currentUser = data.user;
-     products = await loadProducts(); 
-     if (!products.length) {
-         const seed = defaultProducts.map(({id, categoryName, newArrival=true, exclusiveOffer=false, ...rest}) => ({...rest, category_name: categoryName, new_arrival: newArrival, exclusive_offer: exclusiveOffer})); 
-         const seeded = await db.from("products").insert(seed).select("*"); 
-         if (seeded.error) throw seeded.error; 
-         products = seeded.data.map(p => ({...p, categoryName: p.category_name, newArrival: p.new_arrival, exclusiveOffer: p.exclusive_offer}));
-     } 
-     showPanel(); 
- } catch(e) {
-     console.error(e);
-     if (errorBox) errorBox.textContent = "تعذر تحميل المنتجات. تأكد من إعدادات الجدول والجلوس في Supabase.";
-     if (db.auth) await db.auth.signOut();
- }
+    currentUser = data.user;
+    products = await loadProducts(); 
+    if(!products.length) {
+      const seed = defaultProducts.map(({id, categoryName, newArrival = true, exclusiveOffer = false, ...rest}) => ({
+        ...rest, 
+        category_name: categoryName, 
+        new_arrival: newArrival, 
+        exclusive_offer: exclusiveOffer
+      })); 
+      const seeded = await db.from("products").insert(seed).select("*"); 
+      if(seeded.error) throw seeded.error; 
+      products = seeded.data.map(p => ({
+        ...p, 
+        categoryName: p.category_name, 
+        newArrival: p.new_arrival, 
+        exclusiveOffer: p.exclusive_offer
+      }));
+    } 
+    showPanel(); 
+  } catch(e) {
+    console.error(e);
+    if(errorBox) errorBox.textContent = "تعذر تحميل المنتجات. تأكد من إنشاء الجداول وإعدادات Storage في Supabase.";
+    if(db.auth) await db.auth.signOut();
+  }
 }
 
 async function logout() { 
- const db = getDb();
- if (db && db.auth) await db.auth.signOut(); 
- location.reload(); 
+  const db = getDb();
+  if(db && db.auth) await db.auth.signOut(); 
+  location.reload(); 
 }
 
 async function saveProduct(event) {
- event.preventDefault(); 
- const editId = document.getElementById("editId").value; 
- const existing = editId ? products.find(p => p.id === Number(editId)) : null;
- try { 
-     const uploaded = await uploadImage(document.getElementById("productImage").files[0]); 
-     const data = {
-         name: document.getElementById("productName").value.trim(),
-         category: document.getElementById("productCategory").value,
-         categoryName: categoryName(document.getElementById("productCategory").value),
-         price: Number(document.getElementById("productPrice").value),
-         stock: Number(document.getElementById("productStock").value),
-         sizes: document.getElementById("productSizes").value.split(",").map(v => v.trim()).filter(Boolean),
-         colors: document.getElementById("productColors").value.split(",").map(v => v.trim()).filter(Boolean),
-         newArrival: document.getElementById("productNewArrival").checked,
-         exclusiveOffer: document.getElementById("productExclusiveOffer").checked,
-         image: uploaded || existing?.image || ""
-     }; 
-     if(!data.name || data.price < 0 || data.stock < 0) { alert("يرجى إدخال بيانات صحيحة."); return; } 
-     await saveProductToDb(data, editId); 
-     products = await loadProducts(); 
-     resetForm(); 
-     renderAdminProducts(); 
-     alert("تم حفظ المنتج بنجاح."); 
- } catch(e) {
-     console.error(e);
-     alert("تعذر حفظ المنتج. تأكد من إعداد Storage والصلاحيات.");
- }
+  event.preventDefault(); 
+  const editId = document.getElementById("editId").value; 
+  const existing = editId ? products.find(p => p.id === Number(editId)) : null;
+  try { 
+    const uploaded = await uploadImage(document.getElementById("productImage").files[0]); 
+    const data = {
+      name: document.getElementById("productName").value.trim(),
+      category: document.getElementById("productCategory").value,
+      categoryName: categoryName(document.getElementById("productCategory").value),
+      price: Number(document.getElementById("productPrice").value),
+      stock: Number(document.getElementById("productStock").value),
+      sizes: document.getElementById("productSizes").value.split(",").map(v => v.trim()).filter(Boolean),
+      colors: document.getElementById("productColors").value.split(",").map(v => v.trim()).filter(Boolean),
+      newArrival: document.getElementById("productNewArrival").checked,
+      exclusiveOffer: document.getElementById("productExclusiveOffer").checked,
+      image: uploaded || existing?.image || ""
+    }; 
+    if(!data.name || data.price < 0 || data.stock < 0) { 
+      alert("يرجى إدخال بيانات صحيحة."); 
+      return; 
+    } 
+    await saveProductToDb(data, editId); 
+    products = await loadProducts(); 
+    resetForm(); 
+    renderAdminProducts(); 
+    alert("تم حفظ المنتج بنجاح."); 
+  } catch(e) {
+    console.error(e);
+    alert("تعذر حفظ المنتج. تأكد من إعداد Storage والصلاحيات.");
+  }
 }
 
 function editProduct(id) { 
- const p = products.find(x => x.id === id); 
- if (!p) return; 
- document.getElementById("formTitle").textContent = "تعديل المنتج";
- document.getElementById("editId").value = p.id;
- document.getElementById("productName").value = p.name;
- document.getElementById("productCategory").value = p.category;
- document.getElementById("productPrice").value = p.price;
- document.getElementById("productStock").value = p.stock;
- document.getElementById("productSizes").value = (p.sizes || []).join(",");
- document.getElementById("productColors").value = (p.colors || []).join(",");
- document.getElementById("productNewArrival").checked = p.newArrival !== false;
- document.getElementById("productExclusiveOffer").checked = p.exclusiveOffer === true;
- document.getElementById("productImage").value = "";
- document.getElementById("cancelEditBtn").style.display = "inline-block";
- window.scrollTo({top: 0, behavior: "smooth"}); 
+  const p = products.find(x => x.id === id); 
+  if(!p) return; 
+  document.getElementById("formTitle").textContent = "تعديل المنتج";
+  document.getElementById("editId").value = p.id;
+  document.getElementById("productName").value = p.name;
+  document.getElementById("productCategory").value = p.category;
+  document.getElementById("productPrice").value = p.price;
+  document.getElementById("productStock").value = p.stock;
+  document.getElementById("productSizes").value = (p.sizes || []).join(",");
+  document.getElementById("productColors").value = (p.colors || []).join(",");
+  document.getElementById("productNewArrival").checked = p.newArrival !== false;
+  document.getElementById("productExclusiveOffer").checked = p.exclusiveOffer === true;
+  document.getElementById("productImage").value = "";
+  document.getElementById("cancelEditBtn").style.display = "inline-block";
+  window.scrollTo({top: 0, behavior: "smooth"}); 
 }
 
 async function deleteProduct(id) { 
- const p = products.find(x => x.id === id); 
- if (!p || !confirm(`هل تريد حذف "${p.name}"؟`)) return; 
- try {
-     const db = getDb();
-     const r = await db.from("products").delete().eq("id", id);
-     if (r.error) throw r.error;
-     products = products.filter(x => x.id !== id);
-     renderAdminProducts();
- } catch(e) {
-     alert("تعذر حذف المنتج.");
- } 
+  const p = products.find(x => x.id === id); 
+  if(!p || !confirm(`هل تريد حذف "${p.name}"؟`)) return; 
+  try {
+    const db = getDb();
+    const r = await db.from("products").delete().eq("id", id);
+    if(r.error) throw r.error;
+    products = products.filter(x => x.id !== id);
+    renderAdminProducts();
+  } catch(e) {
+    alert("تعذر حذف المنتج.");
+  } 
 }
 
 async function toggleExclusiveOffer(id) { 
- const p = products.find(x => x.id === id);
- if (!p) return;
- try {
-     const db = getDb();
-     const r = await db.from("products").update({exclusive_offer: !p.exclusiveOffer, updated_at: new Date().toISOString()}).eq("id", id);
-     if (r.error) throw r.error;
-     products = await loadProducts();
-     renderAdminProducts();
- } catch(e) {
-     alert("تعذر تحديث المنتج.");
- } 
+  const p = products.find(x => x.id === id);
+  if(!p) return;
+  try {
+    const db = getDb();
+    const r = await db.from("products").update({
+      exclusive_offer: !p.exclusiveOffer, 
+      updated_at: new Date().toISOString()
+    }).eq("id", id);
+    if(r.error) throw r.error;
+    products = await loadProducts();
+    renderAdminProducts();
+  } catch(e) {
+    alert("تعذر تحديث المنتج.");
+  } 
 }
 
 async function toggleNewArrival(id) { 
- const p = products.find(x => x.id === id);
- if (!p) return;
- try {
-     const db = getDb();
-     const r = await db.from("products").update({new_arrival: p.newArrival === false, updated_at: new Date().toISOString()}).eq("id", id);
-     if (r.error) throw r.error;
-     products = await loadProducts();
-     renderAdminProducts();
- } catch(e) {
-     alert("تعذر تحديث المنتج.");
- } 
+  const p = products.find(x => x.id === id);
+  if(!p) return;
+  try {
+    const db = getDb();
+    const r = await db.from("products").update({
+      new_arrival: p.newArrival === false, 
+      updated_at: new Date().toISOString()
+    }).eq("id", id);
+    if(r.error) throw r.error;
+    products = await loadProducts();
+    renderAdminProducts();
+  } catch(e) {
+    alert("تعذر تحديث المنتج.");
+  } 
 }
 
 function resetForm() { 
- document.getElementById("productForm").reset();
- document.getElementById("editId").value = "";
- document.getElementById("formTitle").textContent = "إضافة منتج جديد";
- document.getElementById("cancelEditBtn").style.display = "none"; 
+  document.getElementById("productForm").reset();
+  document.getElementById("editId").value = "";
+  document.getElementById("formTitle").textContent = "إضافة منتج جديد";
+  document.getElementById("cancelEditBtn").style.display = "none"; 
 }
 
 function renderAdminProducts() { 
- const c = document.getElementById("adminProducts"); 
- if (!c) return; 
- const list = selectedCategory === "all" ? products : selectedCategory === "new" ? products.filter(p => p.newArrival !== false) : selectedCategory === "exclusive" ? products.filter(p => p.exclusiveOffer === true) : products.filter(p => p.category === selectedCategory); 
- if (!list.length) {
-     c.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#667085;">لا توجد منتجات.</p>';
-     return;
- } 
- c.innerHTML = list.map(p => `<article class="admin-product">${p.image ? `<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}">` : '<div class="no-img">✦</div>'}<div class="admin-product-info"><h3>${escapeHtml(p.name)}</h3><p>${escapeHtml(p.categoryName || categoryName(p.category))}</p><p>${p.newArrival !== false ? '✓ وصل حديثًا' : ''} ${p.exclusiveOffer ? '✓ عرض حصري' : ''}</p><p>السعر: <strong>${p.price} شيكل</strong> — المخزون: <strong>${p.stock}</strong></p><p>المقاسات: ${(p.sizes || []).join('، ') || '—'}</p><p>الألوان: ${(p.colors || []).join('، ') || '—'}</p><div class="admin-product-actions"><button type="button" onclick="editProduct(${p.id})">تعديل</button><button type="button" onclick="toggleExclusiveOffer(${p.id})">${p.exclusiveOffer ? 'إزالة من العروض' : 'إضافة للعروض'}</button><button type="button" onclick="deleteProduct(${p.id})" style="color:#A61B1B">حذف</button></div><div class="admin-product-actions"><button type="button" onclick="toggleNewArrival(${p.id})">${p.newArrival !== false ? 'إزالة من وصل حديثًا' : 'إضافة لوصل حديثًا'}</button></div></div></article>`).join(''); 
+  const c = document.getElementById("adminProducts"); 
+  if(!c) return; 
+  const list = selectedCategory === "all" ? products : selectedCategory === "new" ? products.filter(p => p.newArrival !== false) : selectedCategory === "exclusive" ? products.filter(p => p.exclusiveOffer === true) : products.filter(p => p.category === selectedCategory); 
+  if(!list.length) {
+    c.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#667085;">لا توجد منتجات.</p>';
+    return;
+  } 
+  c.innerHTML = list.map(p => `
+    <article class="admin-product">
+      ${p.image ? `<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}">` : '<div class="no-img">✦</div>'}
+      <div class="admin-product-info">
+        <h3>${escapeHtml(p.name)}</h3>
+        <p>${escapeHtml(p.categoryName || categoryName(p.category))}</p>
+        <p>${p.newArrival !== false ? '✓ وصل حديثًا' : ''} ${p.exclusiveOffer ? '✓ عرض حصري' : ''}</p>
+        <p>السعر: <strong>${p.price} شيكل</strong> — المخزون: <strong>${p.stock}</strong></p>
+        <p>المقاسات: ${(p.sizes || []).join('، ') || '—'}</p>
+        <p>الألوان: ${(p.colors || []).join('، ') || '—'}</p>
+        <div class="admin-product-actions">
+          <button type="button" onclick="editProduct(${p.id})">تعديل</button>
+          <button type="button" onclick="toggleExclusiveOffer(${p.id})">${p.exclusiveOffer ? 'إزالة من العروض' : 'إضافة للعروض'}</button>
+          <button type="button" onclick="deleteProduct(${p.id})" style="color:#A61B1B">حذف</button>
+        </div>
+        <div class="admin-product-actions">
+          <button type="button" onclick="toggleNewArrival(${p.id})">${p.newArrival !== false ? 'إزالة من وصل حديثًا' : 'إضافة لوصل حديثًا'}</button>
+        </div>
+      </div>
+    </article>
+  `).join(''); 
 }
 
 document.addEventListener("DOMContentLoaded", async () => { 
- const loginBtn = document.getElementById("loginBtn");
- if (loginBtn) loginBtn.addEventListener("click", login);
+  const loginBtn = document.getElementById("loginBtn");
+  if(loginBtn) loginBtn.addEventListener("click", login);
 
- const passInput = document.getElementById("adminPassword");
- if (passInput) passInput.addEventListener("keydown", e => { if (e.key === 'Enter') login(); });
+  const passInput = document.getElementById("adminPassword");
+  if(passInput) passInput.addEventListener("keydown", e => { if (e.key === 'Enter') login(); });
 
- const logoutBtn = document.getElementById("logoutBtn");
- if (logoutBtn) logoutBtn.addEventListener("click", logout);
+  const logoutBtn = document.getElementById("logoutBtn");
+  if(logoutBtn) logoutBtn.addEventListener("click", logout);
 
- const productForm = document.getElementById("productForm");
- if (productForm) productForm.addEventListener("submit", saveProduct);
+  const productForm = document.getElementById("productForm");
+  if(productForm) productForm.addEventListener("submit", saveProduct);
 
- const cancelBtn = document.getElementById("cancelEditBtn");
- if (cancelBtn) cancelBtn.addEventListener("click", resetForm);
+  const cancelBtn = document.getElementById("cancelEditBtn");
+  if(cancelBtn) cancelBtn.addEventListener("click", resetForm);
 
- document.querySelectorAll(".category-tab").forEach(b => b.addEventListener("click", () => {
-     selectedCategory = b.dataset.category;
-     document.querySelectorAll(".category-tab").forEach(t => t.classList.remove("active"));
-     b.classList.add("active");
-     renderAdminProducts();
- }));
+  document.querySelectorAll(".category-tab").forEach(b => b.addEventListener("click", () => {
+    selectedCategory = b.dataset.category;
+    document.querySelectorAll(".category-tab").forEach(t => t.classList.remove("active"));
+    b.classList.add("active");
+    renderAdminProducts();
+  }));
 
- const db = getDb();
- if (db && db.auth) {
-     const {data} = await db.auth.getSession();
-     if (data && data.session) {
-         const {data: row} = await db.from("admin_users").select("user_id").eq("user_id", data.session.user.id).maybeSingle();
-         if (row) {
-             currentUser = data.session.user;
-             try {
-                 products = await loadProducts();
-                 showPanel();
-             } catch(e) {
-                 console.error(e);
-             }
-         }
-     }
- }
+  // فحص الجلسة المفتوحة مسبقاً عند تحريج الصفحة
+  const db = getDb();
+  if(db && db.auth) {
+    try {
+      const {data} = await db.auth.getSession();
+      if(data && data.session) {
+        const {data: row} = await db.from("admin_users").select("user_id").eq("user_id", data.session.user.id).maybeSingle();
+        if(row) {
+          currentUser = data.session.user;
+          products = await loadProducts();
+          showPanel();
+        }
+      }
+    } catch(e) {
+      console.error(e);
+    }
+  }
 });
