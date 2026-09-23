@@ -1,328 +1,1797 @@
 const PRODUCTS_KEY = "naqshaProducts";
 
 const defaultProducts = [
-  {id:1,name:"جاكيت عصري",category:"clothes",categoryName:"الملابس",price:150,stock:8,sizes:["M","L","XL"],colors:["أسود","بيج","زيتي"],image:"images/clothes/jacet.jpg"},
-  {id:2,name:"هودي برتقالي مميز",category:"clothes",categoryName:"الملابس",price:120,stock:6,sizes:["M","L","XL"],colors:["برتقالي","أسود"],image:""},
-  {id:3,name:"طقم ملابس متكامل",category:"clothes",categoryName:"الملابس",price:250,stock:4,sizes:["M","L","XL"],colors:["بيج","أسود"],image:"images/clothes/full.jpg"},
-  {id:4,name:"حذاء نايكي رياضي",category:"shoes",categoryName:"الأحذية",price:200,stock:7,sizes:["40","41","42","43"],colors:["أسود","أبيض"],image:"images/shoes/nike shoes.jpg"},
-  {id:5,name:"حذاء أديداس كلاسيك",category:"shoes",categoryName:"الأحذية",price:180,stock:5,sizes:["40","41","42","43"],colors:["أسود","بني"],image:"images/shoes/adidaes shoes.jpg"},
-  {id:6,name:"تشكيلة أحذية فاخرة",category:"shoes",categoryName:"الأحذية",price:220,stock:3,sizes:["41","42","43"],colors:["أسود","بيج"],image:"images/shoes/shoes fyll.jpg"},
-  {id:7,name:"حقيبة أنيقة 1",category:"bags",categoryName:"الحقائب",price:90,stock:5,sizes:[],colors:[],image:"images/bag/bag1.jpg"},
-  {id:8,name:"حقيبة أنيقة 2",category:"bags",categoryName:"الحقائب",price:110,stock:5,sizes:[],colors:[],image:"images/bag/bag2.jpg"},
-  {id:9,name:"حقيبة أنيقة 3",category:"bags",categoryName:"الحقائب",price:130,stock:5,sizes:[],colors:[],image:"images/bag/bag3.jpg"},
-  {id:10,name:"إكسسوار مميز 1",category:"accessories",categoryName:"الإكسسوارات",price:45,stock:10,sizes:[],colors:[],image:"images/accessories/accessories1.jpg"},
-  {id:11,name:"إكسسوار مميز 2",category:"accessories",categoryName:"الإكسسوارات",price:55,stock:10,sizes:[],colors:[],image:"images/accessories/accessories2.jpg"},
-  {id:12,name:"ساعة نسائية",category:"accessories",categoryName:"الإكسسوارات",price:160,stock:4,sizes:[],colors:[],image:"images/accessories/Watch girl.jpg"},
-  {id:13,name:"ساعة رجالية",category:"accessories",categoryName:"الإكسسوارات",price:180,stock:4,sizes:[],colors:[],image:"images/accessories/Watch men.jpg"},
-  {id:14,name:"سوار ساعات",category:"accessories",categoryName:"الإكسسوارات",price:70,stock:6,sizes:[],colors:[],image:"images/accessories/Watch copels.jpg"}
+  {
+    id: 1,
+    name: "جاكيت عصري",
+    category: "clothes",
+    categoryName: "الملابس",
+    price: 150,
+    stock: 8,
+    sizes: ["M", "L", "XL"],
+    colors: ["أسود", "بيج", "زيتي"],
+    image: "images/clothes/jacet.jpg"
+  },
+  {
+    id: 2,
+    name: "هودي برتقالي مميز",
+    category: "clothes",
+    categoryName: "الملابس",
+    price: 120,
+    stock: 6,
+    sizes: ["M", "L", "XL"],
+    colors: ["برتقالي", "أسود"],
+    image: ""
+  },
+  {
+    id: 3,
+    name: "طقم ملابس متكامل",
+    category: "clothes",
+    categoryName: "الملابس",
+    price: 250,
+    stock: 4,
+    sizes: ["M", "L", "XL"],
+    colors: ["بيج", "أسود"],
+    image: "images/clothes/full.jpg"
+  },
+  {
+    id: 4,
+    name: "حذاء نايكي رياضي",
+    category: "shoes",
+    categoryName: "الأحذية",
+    price: 200,
+    stock: 7,
+    sizes: ["40", "41", "42", "43"],
+    colors: ["أسود", "أبيض"],
+    image: "images/shoes/nike shoes.jpg"
+  },
+  {
+    id: 5,
+    name: "حذاء أديداس كلاسيك",
+    category: "shoes",
+    categoryName: "الأحذية",
+    price: 180,
+    stock: 5,
+    sizes: ["40", "41", "42", "43"],
+    colors: ["أسود", "بني"],
+    image: "images/shoes/adidaes shoes.jpg"
+  },
+  {
+    id: 6,
+    name: "تشكيلة أحذية فاخرة",
+    category: "shoes",
+    categoryName: "الأحذية",
+    price: 220,
+    stock: 3,
+    sizes: ["41", "42", "43"],
+    colors: ["أسود", "بيج"],
+    image: "images/shoes/shoes fyll.jpg"
+  },
+  {
+    id: 7,
+    name: "حقيبة أنيقة 1",
+    category: "bags",
+    categoryName: "الحقائب",
+    price: 90,
+    stock: 5,
+    sizes: [],
+    colors: [],
+    image: "images/bag/bag1.jpg"
+  },
+  {
+    id: 8,
+    name: "حقيبة أنيقة 2",
+    category: "bags",
+    categoryName: "الحقائب",
+    price: 110,
+    stock: 5,
+    sizes: [],
+    colors: [],
+    image: "images/bag/bag2.jpg"
+  },
+  {
+    id: 9,
+    name: "حقيبة أنيقة 3",
+    category: "bags",
+    categoryName: "الحقائب",
+    price: 130,
+    stock: 5,
+    sizes: [],
+    colors: [],
+    image: "images/bag/bag3.jpg"
+  },
+  {
+    id: 10,
+    name: "إكسسوار مميز 1",
+    category: "accessories",
+    categoryName: "الإكسسوارات",
+    price: 45,
+    stock: 10,
+    sizes: [],
+    colors: [],
+    image: "images/accessories/accessories1.jpg"
+  },
+  {
+    id: 11,
+    name: "إكسسوار مميز 2",
+    category: "accessories",
+    categoryName: "الإكسسوارات",
+    price: 55,
+    stock: 10,
+    sizes: [],
+    colors: [],
+    image: "images/accessories/accessories2.jpg"
+  },
+  {
+    id: 12,
+    name: "ساعة نسائية",
+    category: "accessories",
+    categoryName: "الإكسسوارات",
+    price: 160,
+    stock: 4,
+    sizes: [],
+    colors: [],
+    image: "images/accessories/Watch girl.jpg"
+  },
+  {
+    id: 13,
+    name: "ساعة رجالية",
+    category: "accessories",
+    categoryName: "الإكسسوارات",
+    price: 180,
+    stock: 4,
+    sizes: [],
+    colors: [],
+    image: "images/accessories/Watch men.jpg"
+  },
+  {
+    id: 14,
+    name: "سوار ساعات",
+    category: "accessories",
+    categoryName: "الإكسسوارات",
+    price: 70,
+    stock: 6,
+    sizes: [],
+    colors: [],
+    image: "images/accessories/Watch copels.jpg"
+  }
 ];
 
-// دالة جلب العميل المعرّف من config.js
-function getDb() {
-  return window.supabaseClient;
-}
+
+// ==================================================
+// المتغيرات
+// ==================================================
 
 let products = [];
 let currentUser = null;
 let selectedCategory = "all";
 
-function categoryName(category) { 
-  return {clothes:"الملابس",shoes:"الأحذية",bags:"الحقائب",accessories:"الإكسسوارات"}[category] || "منتجات"; 
+
+// ==================================================
+// الاتصال بقاعدة البيانات
+// ==================================================
+
+function getDb() {
+  return window.supabaseClient;
 }
 
-function escapeHtml(value) { 
-  return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#039;"}[c])); 
+
+// ==================================================
+// أسماء الأقسام
+// ==================================================
+
+function categoryName(category) {
+  const names = {
+    clothes: "الملابس",
+    shoes: "الأحذية",
+    bags: "الحقائب",
+    accessories: "الإكسسوارات"
+  };
+
+  return names[category] || "منتجات";
 }
+
+
+// ==================================================
+// حماية النصوص
+// ==================================================
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    (char) => {
+      const entities = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      };
+
+      return entities[char];
+    }
+  );
+}
+
+
+// ==================================================
+// تحميل المنتجات من Supabase
+// ==================================================
 
 async function loadProducts() {
+
   const db = getDb();
-  if(!db) throw new Error("لم يتم تهيئة Supabase");
-  const {data, error} = await db.from("products").select("*").order("id", {ascending: true});
-  if(error) throw error;
-  return (data || []).map(p => ({
-    ...p,
-    categoryName: p.category_name || categoryName(p.category),
-    newArrival: p.new_arrival ?? false,
-    exclusiveOffer: p.exclusive_offer ?? false
-  }));
+
+  if (!db) {
+    throw new Error(
+      "لم يتم تهيئة Supabase"
+    );
+  }
+
+
+  const {
+    data,
+    error
+  } = await db
+    .from("products")
+    .select("*")
+    .order("id", {
+      ascending: true
+    });
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  return (data || []).map(
+    (product) => ({
+
+      ...product,
+
+      categoryName:
+        product.category_name ||
+        categoryName(
+          product.category
+        ),
+
+      // مهم:
+      // true فقط تعني وصل حديثًا
+      newArrival:
+        product.new_arrival === true,
+
+      // مهم:
+      // true فقط تعني عرض حصري
+      exclusiveOffer:
+        product.exclusive_offer === true
+
+    })
+  );
 }
 
-async function saveProductToDb(data, editId) {
+
+// ==================================================
+// حفظ المنتج
+// ==================================================
+
+async function saveProductToDb(
+  data,
+  editId
+) {
+
   const db = getDb();
+
+  if (!db) {
+    throw new Error(
+      "لم يتم تهيئة Supabase"
+    );
+  }
+
+
   const payload = {
+
     name: data.name,
-    category: data.category,
-    category_name: data.categoryName,
-    price: data.price,
-    stock: data.stock,
-    sizes: data.sizes,
-    colors: data.colors,
-    image: data.image,
-    new_arrival: data.newArrival,
-    exclusive_offer: data.exclusiveOffer,
-    updated_at: new Date().toISOString()
+
+    category:
+      data.category,
+
+    category_name:
+      data.categoryName,
+
+    price:
+      data.price,
+
+    stock:
+      data.stock,
+
+    sizes:
+      data.sizes,
+
+    colors:
+      data.colors,
+
+    image:
+      data.image,
+
+    // القيمة تكون true أو false فقط
+    new_arrival:
+      data.newArrival === true,
+
+    // القيمة تكون true أو false فقط
+    exclusive_offer:
+      data.exclusiveOffer === true,
+
+    updated_at:
+      new Date().toISOString()
+
   };
-  const result = editId 
-    ? await db.from("products").update(payload).eq("id", Number(editId)) 
-    : await db.from("products").insert(payload);
-  if(result.error) throw result.error;
+
+
+  let result;
+
+
+  if (editId) {
+
+    result =
+      await db
+        .from("products")
+        .update(payload)
+        .eq(
+          "id",
+          Number(editId)
+        );
+
+  } else {
+
+    result =
+      await db
+        .from("products")
+        .insert(payload);
+
+  }
+
+
+  if (result.error) {
+    throw result.error;
+  }
 }
+
+
+// ==================================================
+// رفع صورة المنتج
+// ==================================================
 
 async function uploadImage(file) {
-  if(!file) return "";
+
+  if (!file) {
+    return "";
+  }
+
+
   const db = getDb();
-  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
-  const path = `${crypto.randomUUID()}.${ext}`;
-  const {error} = await db.storage.from("product-images").upload(path, file, {upsert: false, contentType: file.type});
-  if(error) throw error;
-  return db.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+
+  if (!db) {
+    throw new Error(
+      "لم يتم تهيئة Supabase"
+    );
+  }
+
+
+  const extension =
+    (
+      file.name
+        .split(".")
+        .pop() ||
+      "jpg"
+    ).toLowerCase();
+
+
+  const filePath =
+    `${crypto.randomUUID()}.${extension}`;
+
+
+  const {
+    error
+  } =
+    await db.storage
+      .from("product-images")
+      .upload(
+        filePath,
+        file,
+        {
+          upsert: false,
+
+          contentType:
+            file.type ||
+            "image/jpeg"
+        }
+      );
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  const {
+    data
+  } =
+    db.storage
+      .from("product-images")
+      .getPublicUrl(
+        filePath
+      );
+
+
+  return data.publicUrl;
 }
 
-function showPanel() { 
-  const loginBox = document.getElementById("loginBox");
-  const adminPanel = document.getElementById("adminPanel");
-  if(loginBox) loginBox.classList.add("hidden"); 
-  if(adminPanel) adminPanel.classList.remove("hidden"); 
-  renderAdminProducts(); 
+
+// ==================================================
+// إظهار لوحة التحكم
+// ==================================================
+
+function showPanel() {
+
+  document
+    .getElementById("loginBox")
+    ?.classList.add(
+      "hidden"
+    );
+
+
+  document
+    .getElementById("adminPanel")
+    ?.classList.remove(
+      "hidden"
+    );
+
+
+  renderAdminProducts();
 }
+
+
+// ==================================================
+// تسجيل الدخول
+// ==================================================
 
 async function login() {
-  const emailEl = document.getElementById("adminEmail");
-  const passEl = document.getElementById("adminPassword");
-  const errorBox = document.getElementById("loginError");
-  
-  if(!emailEl || !passEl) return;
-  const email = emailEl.value.trim();
-  const password = passEl.value;
-  if(errorBox) errorBox.textContent = "";
 
-  const db = getDb();
-  if(!db) {
-    if(errorBox) errorBox.textContent = "خطأ في الاتصال بقاعدة البيانات. تأكد من استدعاء config.js.";
+  const emailElement =
+    document.getElementById(
+      "adminEmail"
+    );
+
+
+  const passwordElement =
+    document.getElementById(
+      "adminPassword"
+    );
+
+
+  const errorBox =
+    document.getElementById(
+      "loginError"
+    );
+
+
+  if (
+    !emailElement ||
+    !passwordElement
+  ) {
     return;
   }
 
+
+  const email =
+    emailElement.value.trim();
+
+
+  const password =
+    passwordElement.value;
+
+
+  if (errorBox) {
+    errorBox.textContent = "";
+  }
+
+
+  const db = getDb();
+
+
+  if (!db) {
+
+    if (errorBox) {
+
+      errorBox.textContent =
+        "خطأ في الاتصال بقاعدة البيانات. تأكد من تحميل config.js.";
+
+    }
+
+    return;
+  }
+
+
   try {
-    const {data, error} = await db.auth.signInWithPassword({email, password});
-    if(error) {
-      if(errorBox) errorBox.textContent = "بيانات الدخول غير صحيحة.";
+
+    // تسجيل الدخول
+    const {
+      data,
+      error
+    } =
+      await db.auth
+        .signInWithPassword({
+          email,
+          password
+        });
+
+
+    if (error) {
+
+      if (errorBox) {
+        errorBox.textContent =
+          "بيانات الدخول غير صحيحة.";
+      }
+
       return;
     }
 
-    const {data: adminRow} = await db.from("admin_users").select("user_id").eq("user_id", data.user.id).maybeSingle();
-    if(!adminRow) {
+
+    // التحقق من أن المستخدم أدمن
+    const {
+      data: adminRow,
+      error: adminError
+    } =
+      await db
+        .from("admin_users")
+        .select("user_id")
+        .eq(
+          "user_id",
+          data.user.id
+        )
+        .maybeSingle();
+
+
+    if (adminError) {
+      throw adminError;
+    }
+
+
+    if (!adminRow) {
+
       await db.auth.signOut();
-      if(errorBox) errorBox.textContent = "هذا الحساب غير مخول لإدارة المتجر.";
+
+
+      if (errorBox) {
+
+        errorBox.textContent =
+          "هذا الحساب غير مخول لإدارة المتجر.";
+
+      }
+
       return;
     }
 
-    currentUser = data.user;
-    products = await loadProducts(); 
-    if(!products.length) {
-      const seed = defaultProducts.map(({id, categoryName, newArrival = true, exclusiveOffer = false, ...rest}) => ({
-        ...rest, 
-        category_name: categoryName, 
-        new_arrival: newArrival, 
-        exclusive_offer: exclusiveOffer
-      })); 
-      const seeded = await db.from("products").insert(seed).select("*"); 
-      if(seeded.error) throw seeded.error; 
-      products = seeded.data.map(p => ({
-        ...p, 
-        categoryName: p.category_name, 
-        newArrival: p.new_arrival, 
-        exclusiveOffer: p.exclusive_offer
-      }));
-    } 
-    showPanel(); 
-  } catch(e) {
-    console.error(e);
-    if(errorBox) errorBox.textContent = "تعذر تحميل المنتجات. تأكد من إنشاء الجداول وإعدادات Storage في Supabase.";
-    if(db.auth) await db.auth.signOut();
+
+    currentUser =
+      data.user;
+
+
+    products =
+      await loadProducts();
+
+
+    // ==================================================
+    // زرع المنتجات الافتراضية فقط إذا كانت القاعدة فارغة
+    // ==================================================
+
+    if (!products.length) {
+
+      const seed =
+        defaultProducts.map(
+          (product) => ({
+
+            name:
+              product.name,
+
+            category:
+              product.category,
+
+            category_name:
+              product.categoryName,
+
+            price:
+              product.price,
+
+            stock:
+              product.stock,
+
+            sizes:
+              product.sizes,
+
+            colors:
+              product.colors,
+
+            image:
+              product.image,
+
+            // مهم جدًا:
+            // المنتجات الافتراضية ليست "وصل حديثًا"
+            new_arrival:
+              false,
+
+            // وليست عروضًا حصرية
+            exclusive_offer:
+              false
+
+          })
+        );
+
+
+      const {
+        data: seededData,
+        error: seedError
+      } =
+        await db
+          .from("products")
+          .insert(seed)
+          .select("*");
+
+
+      if (seedError) {
+        throw seedError;
+      }
+
+
+      products =
+        (seededData || []).map(
+          (product) => ({
+
+            ...product,
+
+            categoryName:
+              product.category_name,
+
+            newArrival:
+              product.new_arrival === true,
+
+            exclusiveOffer:
+              product.exclusive_offer === true
+
+          })
+        );
+    }
+
+
+    showPanel();
+
+  } catch (error) {
+
+    console.error(
+      "خطأ تسجيل الدخول:",
+      error
+    );
+
+
+    if (errorBox) {
+
+      errorBox.textContent =
+        "تعذر تحميل المنتجات. تأكد من الجداول والصلاحيات.";
+
+    }
+
+
+    await db.auth.signOut();
   }
 }
 
-async function logout() { 
+
+// ==================================================
+// تسجيل الخروج
+// ==================================================
+
+async function logout() {
+
   const db = getDb();
-  if(db && db.auth) await db.auth.signOut(); 
-  location.reload(); 
+
+  if (db?.auth) {
+    await db.auth.signOut();
+  }
+
+  location.reload();
 }
+
+
+// ==================================================
+// حفظ منتج
+// ==================================================
 
 async function saveProduct(event) {
-  event.preventDefault(); 
-  const editId = document.getElementById("editId").value; 
-  const existing = editId ? products.find(p => p.id === Number(editId)) : null;
-  try { 
-    const uploaded = await uploadImage(document.getElementById("productImage").files[0]); 
-    const data = {
-      name: document.getElementById("productName").value.trim(),
-      category: document.getElementById("productCategory").value,
-      categoryName: categoryName(document.getElementById("productCategory").value),
-      price: Number(document.getElementById("productPrice").value),
-      stock: Number(document.getElementById("productStock").value),
-      sizes: document.getElementById("productSizes").value.split(",").map(v => v.trim()).filter(Boolean),
-      colors: document.getElementById("productColors").value.split(",").map(v => v.trim()).filter(Boolean),
-      newArrival: document.getElementById("productNewArrival").checked,
-      exclusiveOffer: document.getElementById("productExclusiveOffer").checked,
-      image: uploaded || existing?.image || ""
-    }; 
-    if(!data.name || data.price < 0 || data.stock < 0) { 
-      alert("يرجى إدخال بيانات صحيحة."); 
-      return; 
-    } 
-    await saveProductToDb(data, editId); 
-    products = await loadProducts(); 
-    resetForm(); 
-    renderAdminProducts(); 
-    alert("تم حفظ المنتج بنجاح."); 
-  } catch(e) {
-    console.error(e);
-    alert("تعذر حفظ المنتج. تأكد من إعداد Storage والصلاحيات.");
-  }
-}
 
-function editProduct(id) { 
-  const p = products.find(x => x.id === id); 
-  if(!p) return; 
-  document.getElementById("formTitle").textContent = "تعديل المنتج";
-  document.getElementById("editId").value = p.id;
-  document.getElementById("productName").value = p.name;
-  document.getElementById("productCategory").value = p.category;
-  document.getElementById("productPrice").value = p.price;
-  document.getElementById("productStock").value = p.stock;
-  document.getElementById("productSizes").value = (p.sizes || []).join(",");
-  document.getElementById("productColors").value = (p.colors || []).join(",");
-  document.getElementById("productNewArrival").checked = p.newArrival !== false;
-  document.getElementById("productExclusiveOffer").checked = p.exclusiveOffer === true;
-  document.getElementById("productImage").value = "";
-  document.getElementById("cancelEditBtn").style.display = "inline-block";
-  window.scrollTo({top: 0, behavior: "smooth"}); 
-}
+  event.preventDefault();
 
-async function deleteProduct(id) { 
-  const p = products.find(x => x.id === id); 
-  if(!p || !confirm(`هل تريد حذف "${p.name}"؟`)) return; 
+
+  const editId =
+    document.getElementById(
+      "editId"
+    ).value;
+
+
+  const existing =
+    editId
+      ? products.find(
+          (product) =>
+            product.id ===
+            Number(editId)
+        )
+      : null;
+
+
   try {
-    const db = getDb();
-    const r = await db.from("products").delete().eq("id", id);
-    if(r.error) throw r.error;
-    products = products.filter(x => x.id !== id);
-    renderAdminProducts();
-  } catch(e) {
-    alert("تعذر حذف المنتج.");
-  } 
-}
 
-async function toggleExclusiveOffer(id) { 
-  const p = products.find(x => x.id === id);
-  if(!p) return;
-  try {
-    const db = getDb();
-    const r = await db.from("products").update({
-      exclusive_offer: !p.exclusiveOffer, 
-      updated_at: new Date().toISOString()
-    }).eq("id", id);
-    if(r.error) throw r.error;
-    products = await loadProducts();
-    renderAdminProducts();
-  } catch(e) {
-    alert("تعذر تحديث المنتج.");
-  } 
-}
+    const imageInput =
+      document.getElementById(
+        "productImage"
+      );
 
-async function toggleNewArrival(id) { 
-  const p = products.find(x => x.id === id);
-  if(!p) return;
-  try {
-    const db = getDb();
-    const r = await db.from("products").update({
-      new_arrival: p.newArrival === false, 
-      updated_at: new Date().toISOString()
-    }).eq("id", id);
-    if(r.error) throw r.error;
-    products = await loadProducts();
-    renderAdminProducts();
-  } catch(e) {
-    alert("تعذر تحديث المنتج.");
-  } 
-}
 
-function resetForm() { 
-  document.getElementById("productForm").reset();
-  document.getElementById("editId").value = "";
-  document.getElementById("formTitle").textContent = "إضافة منتج جديد";
-  document.getElementById("cancelEditBtn").style.display = "none"; 
-}
+    let uploadedImage = "";
 
-function renderAdminProducts() { 
-  const c = document.getElementById("adminProducts"); 
-  if(!c) return; 
-  const list = selectedCategory === "all" ? products : selectedCategory === "new" ? products.filter(p => p.newArrival !== false) : selectedCategory === "exclusive" ? products.filter(p => p.exclusiveOffer === true) : products.filter(p => p.category === selectedCategory); 
-  if(!list.length) {
-    c.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#667085;">لا توجد منتجات.</p>';
-    return;
-  } 
-  c.innerHTML = list.map(p => `
-    <article class="admin-product">
-      ${p.image ? `<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}">` : '<div class="no-img">✦</div>'}
-      <div class="admin-product-info">
-        <h3>${escapeHtml(p.name)}</h3>
-        <p>${escapeHtml(p.categoryName || categoryName(p.category))}</p>
-        <p>${p.newArrival !== false ? '✓ وصل حديثًا' : ''} ${p.exclusiveOffer ? '✓ عرض حصري' : ''}</p>
-        <p>السعر: <strong>${p.price} شيكل</strong> — المخزون: <strong>${p.stock}</strong></p>
-        <p>المقاسات: ${(p.sizes || []).join('، ') || '—'}</p>
-        <p>الألوان: ${(p.colors || []).join('، ') || '—'}</p>
-        <div class="admin-product-actions">
-          <button type="button" onclick="editProduct(${p.id})">تعديل</button>
-          <button type="button" onclick="toggleExclusiveOffer(${p.id})">${p.exclusiveOffer ? 'إزالة من العروض' : 'إضافة للعروض'}</button>
-          <button type="button" onclick="deleteProduct(${p.id})" style="color:#A61B1B">حذف</button>
-        </div>
-        <div class="admin-product-actions">
-          <button type="button" onclick="toggleNewArrival(${p.id})">${p.newArrival !== false ? 'إزالة من وصل حديثًا' : 'إضافة لوصل حديثًا'}</button>
-        </div>
-      </div>
-    </article>
-  `).join(''); 
-}
 
-document.addEventListener("DOMContentLoaded", async () => { 
-  const loginBtn = document.getElementById("loginBtn");
-  if(loginBtn) loginBtn.addEventListener("click", login);
+    // إذا اختار المستخدم صورة جديدة
+    if (
+      imageInput &&
+      imageInput.files &&
+      imageInput.files.length
+    ) {
 
-  const passInput = document.getElementById("adminPassword");
-  if(passInput) passInput.addEventListener("keydown", e => { if (e.key === 'Enter') login(); });
+      uploadedImage =
+        await uploadImage(
+          imageInput.files[0]
+        );
 
-  const logoutBtn = document.getElementById("logoutBtn");
-  if(logoutBtn) logoutBtn.addEventListener("click", logout);
-
-  const productForm = document.getElementById("productForm");
-  if(productForm) productForm.addEventListener("submit", saveProduct);
-
-  const cancelBtn = document.getElementById("cancelEditBtn");
-  if(cancelBtn) cancelBtn.addEventListener("click", resetForm);
-
-  document.querySelectorAll(".category-tab").forEach(b => b.addEventListener("click", () => {
-    selectedCategory = b.dataset.category;
-    document.querySelectorAll(".category-tab").forEach(t => t.classList.remove("active"));
-    b.classList.add("active");
-    renderAdminProducts();
-  }));
-
-  // فحص الجلسة المفتوحة مسبقاً عند تحريج الصفحة
-  const db = getDb();
-  if(db && db.auth) {
-    try {
-      const {data} = await db.auth.getSession();
-      if(data && data.session) {
-        const {data: row} = await db.from("admin_users").select("user_id").eq("user_id", data.session.user.id).maybeSingle();
-        if(row) {
-          currentUser = data.session.user;
-          products = await loadProducts();
-          showPanel();
-        }
-      }
-    } catch(e) {
-      console.error(e);
     }
+
+
+    const category =
+      document.getElementById(
+        "productCategory"
+      ).value;
+
+
+    const data = {
+
+      name:
+        document
+          .getElementById(
+            "productName"
+          )
+          .value
+          .trim(),
+
+      category:
+
+        category,
+
+      categoryName:
+
+        categoryName(
+          category
+        ),
+
+      price:
+
+        Number(
+          document
+            .getElementById(
+              "productPrice"
+            )
+            .value
+        ),
+
+      stock:
+
+        Number(
+          document
+            .getElementById(
+              "productStock"
+            )
+            .value
+        ),
+
+      sizes:
+
+        document
+          .getElementById(
+            "productSizes"
+          )
+          .value
+          .split(",")
+          .map(
+            (value) =>
+              value.trim()
+          )
+          .filter(Boolean),
+
+      colors:
+
+        document
+          .getElementById(
+            "productColors"
+          )
+          .value
+          .split(",")
+          .map(
+            (value) =>
+              value.trim()
+          )
+          .filter(Boolean),
+
+
+      // الحالة الحالية الحقيقية
+      newArrival:
+
+        document
+          .getElementById(
+            "productNewArrival"
+          )
+          .checked === true,
+
+
+      // الحالة الحالية الحقيقية
+      exclusiveOffer:
+
+        document
+          .getElementById(
+            "productExclusiveOffer"
+          )
+          .checked === true,
+
+
+      // عند تعديل المنتج بدون صورة جديدة
+      // نحتفظ بالصورة القديمة
+      image:
+
+        uploadedImage ||
+        existing?.image ||
+        ""
+
+    };
+
+
+    // التحقق من البيانات
+
+    if (
+      !data.name ||
+      !Number.isFinite(
+        data.price
+      ) ||
+      data.price < 0 ||
+      !Number.isFinite(
+        data.stock
+      ) ||
+      data.stock < 0
+    ) {
+
+      alert(
+        "يرجى إدخال بيانات صحيحة."
+      );
+
+      return;
+    }
+
+
+    await saveProductToDb(
+      data,
+      editId
+    );
+
+
+    // إعادة تحميل البيانات من Supabase
+    products =
+      await loadProducts();
+
+
+    resetForm();
+
+    renderAdminProducts();
+
+
+    alert(
+      "تم حفظ المنتج بنجاح."
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "خطأ حفظ المنتج:",
+      error
+    );
+
+
+    alert(
+      "تعذر حفظ المنتج. تأكد من Storage والصلاحيات."
+    );
   }
-});
+}
+
+
+// ==================================================
+// تعديل منتج
+// ==================================================
+
+function editProduct(id) {
+
+  const product =
+    products.find(
+      (item) =>
+        item.id === id
+    );
+
+
+  if (!product) {
+    return;
+  }
+
+
+  document
+    .getElementById(
+      "formTitle"
+    ).textContent =
+      "تعديل المنتج";
+
+
+  document
+    .getElementById(
+      "editId"
+    ).value =
+      product.id;
+
+
+  document
+    .getElementById(
+      "productName"
+    ).value =
+      product.name || "";
+
+
+  document
+    .getElementById(
+      "productCategory"
+    ).value =
+      product.category ||
+      "clothes";
+
+
+  document
+    .getElementById(
+      "productPrice"
+    ).value =
+      product.price ?? "";
+
+
+  document
+    .getElementById(
+      "productStock"
+    ).value =
+      product.stock ?? "";
+
+
+  document
+    .getElementById(
+      "productSizes"
+    ).value =
+      (
+        product.sizes || []
+      ).join(",");
+
+
+  document
+    .getElementById(
+      "productColors"
+    ).value =
+      (
+        product.colors || []
+      ).join(",");
+
+
+  // ==================================================
+  // الإصلاح المهم
+  // ==================================================
+  // لا نستخدم:
+  // product.newArrival !== false
+  //
+  // لأن ذلك يجعل null أو undefined
+  // يعتبر "وصل حديثًا".
+  //
+  // نستخدم true فقط.
+  // ==================================================
+
+  document
+    .getElementById(
+      "productNewArrival"
+    ).checked =
+      product.newArrival === true;
+
+
+  document
+    .getElementById(
+      "productExclusiveOffer"
+    ).checked =
+      product.exclusiveOffer === true;
+
+
+  // لا نحذف الصورة القديمة عند التعديل
+  document
+    .getElementById(
+      "productImage"
+    ).value = "";
+
+
+  const cancelButton =
+    document.getElementById(
+      "cancelEditBtn"
+    );
+
+
+  if (cancelButton) {
+    cancelButton.style.display =
+      "inline-block";
+  }
+
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+
+// ==================================================
+// حذف المنتج
+// ==================================================
+
+async function deleteProduct(id) {
+
+  const product =
+    products.find(
+      (item) =>
+        item.id === id
+    );
+
+
+  if (!product) {
+    return;
+  }
+
+
+  const confirmed =
+    confirm(
+      `هل تريد حذف "${product.name}"؟`
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+
+    const db = getDb();
+
+
+    const {
+      error
+    } =
+      await db
+        .from("products")
+        .delete()
+        .eq(
+          "id",
+          id
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    products =
+      products.filter(
+        (item) =>
+          item.id !== id
+      );
+
+
+    renderAdminProducts();
+
+
+  } catch (error) {
+
+    console.error(
+      "خطأ حذف المنتج:",
+      error
+    );
+
+
+    alert(
+      "تعذر حذف المنتج."
+    );
+  }
+}
+
+
+// ==================================================
+// تبديل حالة العرض الحصري
+// ==================================================
+
+async function toggleExclusiveOffer(id) {
+
+  const product =
+    products.find(
+      (item) =>
+        item.id === id
+    );
+
+
+  if (!product) {
+    return;
+  }
+
+
+  try {
+
+    const db = getDb();
+
+
+    const newValue =
+      product.exclusiveOffer !== true;
+
+
+    const {
+      error
+    } =
+      await db
+        .from("products")
+        .update({
+
+          exclusive_offer:
+            newValue,
+
+          updated_at:
+            new Date()
+              .toISOString()
+
+        })
+        .eq(
+          "id",
+          id
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    products =
+      await loadProducts();
+
+
+    renderAdminProducts();
+
+
+  } catch (error) {
+
+    console.error(
+      "خطأ تحديث العرض:",
+      error
+    );
+
+
+    alert(
+      "تعذر تحديث المنتج."
+    );
+  }
+}
+
+
+// ==================================================
+// تبديل حالة وصل حديثًا
+// ==================================================
+
+async function toggleNewArrival(id) {
+
+  const product =
+    products.find(
+      (item) =>
+        item.id === id
+    );
+
+
+  if (!product) {
+    return;
+  }
+
+
+  try {
+
+    const db = getDb();
+
+
+    const newValue =
+      product.newArrival !== true;
+
+
+    const {
+      error
+    } =
+      await db
+        .from("products")
+        .update({
+
+          new_arrival:
+            newValue,
+
+          updated_at:
+            new Date()
+              .toISOString()
+
+        })
+        .eq(
+          "id",
+          id
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    products =
+      await loadProducts();
+
+
+    renderAdminProducts();
+
+
+  } catch (error) {
+
+    console.error(
+      "خطأ تحديث وصل حديثًا:",
+      error
+    );
+
+
+    alert(
+      "تعذر تحديث المنتج."
+    );
+  }
+}
+
+
+// ==================================================
+// إعادة نموذج المنتج
+// ==================================================
+
+function resetForm() {
+
+  const form =
+    document.getElementById(
+      "productForm"
+    );
+
+
+  if (form) {
+    form.reset();
+  }
+
+
+  const editId =
+    document.getElementById(
+      "editId"
+    );
+
+
+  if (editId) {
+    editId.value = "";
+  }
+
+
+  const formTitle =
+    document.getElementById(
+      "formTitle"
+    );
+
+
+  if (formTitle) {
+
+    formTitle.textContent =
+      "إضافة منتج جديد";
+
+  }
+
+
+  const cancelButton =
+    document.getElementById(
+      "cancelEditBtn"
+    );
+
+
+  if (cancelButton) {
+
+    cancelButton.style.display =
+      "none";
+
+  }
+}
+
+
+// ==================================================
+// عرض المنتجات في لوحة الأدمن
+// ==================================================
+
+function renderAdminProducts() {
+
+  const container =
+    document.getElementById(
+      "adminProducts"
+    );
+
+
+  if (!container) {
+    return;
+  }
+
+
+  let list = [];
+
+
+  // جميع المنتجات
+  if (
+    selectedCategory ===
+    "all"
+  ) {
+
+    list = products;
+
+  }
+
+
+  // وصل حديثًا
+  else if (
+    selectedCategory ===
+    "new"
+  ) {
+
+    list =
+      products.filter(
+        (product) =>
+          product.newArrival === true
+      );
+
+  }
+
+
+  // العروض الحصرية
+  else if (
+    selectedCategory ===
+    "exclusive"
+  ) {
+
+    list =
+      products.filter(
+        (product) =>
+          product.exclusiveOffer === true
+      );
+
+  }
+
+
+  // الأقسام العادية
+  else {
+
+    list =
+      products.filter(
+        (product) =>
+          product.category ===
+          selectedCategory
+      );
+
+  }
+
+
+  if (!list.length) {
+
+    container.innerHTML = `
+      <p
+        style="
+          grid-column:1/-1;
+          text-align:center;
+          color:#667085;
+        "
+      >
+        لا توجد منتجات.
+      </p>
+    `;
+
+    return;
+  }
+
+
+  container.innerHTML =
+    list
+      .map(
+        (product) => `
+
+          <article class="admin-product">
+
+            ${
+              product.image
+
+                ? `
+                  <img
+                    src="${escapeHtml(
+                      product.image
+                    )}"
+                    alt="${escapeHtml(
+                      product.name
+                    )}"
+                  >
+                `
+
+                : `
+                  <div class="no-img">
+                    ✦
+                  </div>
+                `
+            }
+
+
+            <div class="admin-product-info">
+
+              <h3>
+                ${escapeHtml(
+                  product.name
+                )}
+              </h3>
+
+
+              <p>
+                ${escapeHtml(
+                  product.categoryName ||
+                  categoryName(
+                    product.category
+                  )
+                )}
+              </p>
+
+
+              <p>
+
+                ${
+                  product.newArrival === true
+                    ? "✓ وصل حديثًا"
+                    : ""
+                }
+
+                ${
+                  product.exclusiveOffer === true
+                    ? " ✓ عرض حصري"
+                    : ""
+                }
+
+              </p>
+
+
+              <p>
+                السعر:
+                <strong>
+                  ${product.price}
+                  شيكل
+                </strong>
+
+                —
+
+                المخزون:
+                <strong>
+                  ${product.stock}
+                </strong>
+              </p>
+
+
+              <p>
+                المقاسات:
+                ${
+                  (
+                    product.sizes ||
+                    []
+                  ).join("، ") ||
+                  "—"
+                }
+              </p>
+
+
+              <p>
+                الألوان:
+                ${
+                  (
+                    product.colors ||
+                    []
+                  ).join("، ") ||
+                  "—"
+                }
+              </p>
+
+
+              <div
+                class="admin-product-actions"
+              >
+
+                <button
+                  type="button"
+                  onclick="editProduct(
+                    ${product.id}
+                  )"
+                >
+                  تعديل
+                </button>
+
+
+                <button
+                  type="button"
+                  onclick="toggleExclusiveOffer(
+                    ${product.id}
+                  )"
+                >
+                  ${
+                    product.exclusiveOffer === true
+                      ? "إزالة من العروض"
+                      : "إضافة للعروض"
+                  }
+                </button>
+
+
+                <button
+                  type="button"
+                  onclick="deleteProduct(
+                    ${product.id}
+                  )"
+                  style="color:#A61B1B"
+                >
+                  حذف
+                </button>
+
+              </div>
+
+
+              <div
+                class="admin-product-actions"
+              >
+
+                <button
+                  type="button"
+                  onclick="toggleNewArrival(
+                    ${product.id}
+                  )"
+                >
+                  ${
+                    product.newArrival === true
+                      ? "إزالة من وصل حديثًا"
+                      : "إضافة لوصل حديثًا"
+                  }
+                </button>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        `
+      )
+      .join("");
+}
+
+
+// ==================================================
+// تشغيل لوحة الأدمن
+// ==================================================
+
+document.addEventListener(
+  "DOMContentLoaded",
+  async () => {
+
+    // زر تسجيل الدخول
+    document
+      .getElementById(
+        "loginBtn"
+      )
+      ?.addEventListener(
+        "click",
+        login
+      );
+
+
+    // الضغط Enter في كلمة المرور
+    document
+      .getElementById(
+        "adminPassword"
+      )
+      ?.addEventListener(
+        "keydown",
+        (event) => {
+
+          if (
+            event.key ===
+            "Enter"
+          ) {
+
+            login();
+
+          }
+
+        }
+      );
+
+
+    // تسجيل الخروج
+    document
+      .getElementById(
+        "logoutBtn"
+      )
+      ?.addEventListener(
+        "click",
+        logout
+      );
+
+
+    // نموذج المنتج
+    document
+      .getElementById(
+        "productForm"
+      )
+      ?.addEventListener(
+        "submit",
+        saveProduct
+      );
+
+
+    // إلغاء التعديل
+    document
+      .getElementById(
+        "cancelEditBtn"
+      )
+      ?.addEventListener(
+        "click",
+        resetForm
+      );
+
+
+    // ==================================================
+    // تبويبات الأقسام
+    // ==================================================
+
+    document
+      .querySelectorAll(
+        ".category-tab"
+      )
+      .forEach(
+        (button) => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              selectedCategory =
+                button.dataset.category;
+
+
+              document
+                .querySelectorAll(
+                  ".category-tab"
+                )
+                .forEach(
+                  (tab) =>
+                    tab.classList.remove(
+                      "active"
+                    )
+                );
+
+
+              button.classList.add(
+                "active"
+              );
+
+
+              renderAdminProducts();
+
+            }
+          );
+
+        }
+      );
+
+
+    // ==================================================
+    // التحقق من الجلسة الحالية
+    // ==================================================
+
+    const db =
+      getDb();
+
+
+    if (
+      db?.auth
+    ) {
+
+      try {
+
+        const {
+          data
+        } =
+          await db.auth.getSession();
+
+
+        if (
+          data?.session
+        ) {
+
+          const {
+            data: adminRow,
+            error
+          } =
+            await db
+              .from(
+                "admin_users"
+              )
+              .select(
+                "user_id"
+              )
+              .eq(
+                "user_id",
+                data.session
+                  .user.id
+              )
+              .maybeSingle();
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          if (adminRow) {
+
+            currentUser =
+              data.session.user;
+
+
+            products =
+              await loadProducts();
+
+
+            showPanel();
+
+          }
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "خطأ التحقق من الجلسة:",
+          error
+        );
+
+      }
+
+    }
+
+  }
+);
