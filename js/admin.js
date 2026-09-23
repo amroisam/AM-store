@@ -157,7 +157,6 @@ const defaultProducts = [
   }
 ];
 
-
 // ==================================================
 // المتغيرات
 // ==================================================
@@ -166,7 +165,6 @@ let products = [];
 let currentUser = null;
 let selectedCategory = "all";
 
-
 // ==================================================
 // الاتصال بقاعدة البيانات
 // ==================================================
@@ -174,7 +172,6 @@ let selectedCategory = "all";
 function getDb() {
   return window.supabaseClient;
 }
-
 
 // ==================================================
 // أسماء الأقسام
@@ -190,7 +187,6 @@ function categoryName(category) {
 
   return names[category] || "منتجات";
 }
-
 
 // ==================================================
 // حماية النصوص
@@ -213,84 +209,55 @@ function escapeHtml(value) {
   );
 }
 
-
 // ==================================================
 // تحميل المنتجات من Supabase
 // ==================================================
 
 async function loadProducts() {
-
   const db = getDb();
 
   if (!db) {
-    throw new Error(
-      "لم يتم تهيئة Supabase"
-    );
+    throw new Error("لم يتم تهيئة Supabase");
   }
 
-
-  const {
-    data,
-    error
-  } = await db
+  const { data, error } = await db
     .from("products")
     .select("*")
     .order("id", {
       ascending: true
     });
 
-
   if (error) {
     throw error;
   }
 
+  return (data || []).map((product) => ({
+    ...product,
 
-  return (data || []).map(
-    (product) => ({
+    categoryName:
+      product.category_name ||
+      categoryName(product.category),
 
-      ...product,
+    newArrival:
+      product.new_arrival === true,
 
-      categoryName:
-        product.category_name ||
-        categoryName(
-          product.category
-        ),
-
-      // مهم:
-      // true فقط تعني وصل حديثًا
-      newArrival:
-        product.new_arrival === true,
-
-      // مهم:
-      // true فقط تعني عرض حصري
-      exclusiveOffer:
-        product.exclusive_offer === true
-
-    })
-  );
+    exclusiveOffer:
+      product.exclusive_offer === true
+  }));
 }
 
-
 // ==================================================
-// حفظ المنتج
+// حفظ المنتج في قاعدة البيانات
 // ==================================================
 
-async function saveProductToDb(
-  data,
-  editId
-) {
-
+async function saveProductToDb(data, editId) {
   const db = getDb();
 
   if (!db) {
-    throw new Error(
-      "لم يتم تهيئة Supabase"
-    );
+    throw new Error("لم يتم تهيئة Supabase");
   }
 
-
   const payload = {
-
     name: data.name,
 
     category:
@@ -314,221 +281,144 @@ async function saveProductToDb(
     image:
       data.image,
 
-    // القيمة تكون true أو false فقط
     new_arrival:
       data.newArrival === true,
 
-    // القيمة تكون true أو false فقط
     exclusive_offer:
       data.exclusiveOffer === true,
 
     updated_at:
       new Date().toISOString()
-
   };
-
 
   let result;
 
-
   if (editId) {
-
-    result =
-      await db
-        .from("products")
-        .update(payload)
-        .eq(
-          "id",
-          Number(editId)
-        );
-
+    result = await db
+      .from("products")
+      .update(payload)
+      .eq("id", Number(editId));
   } else {
-
-    result =
-      await db
-        .from("products")
-        .insert(payload);
-
+    result = await db
+      .from("products")
+      .insert(payload);
   }
-
 
   if (result.error) {
     throw result.error;
   }
 }
 
-
 // ==================================================
 // رفع صورة المنتج
 // ==================================================
 
 async function uploadImage(file) {
-
   if (!file) {
     return "";
   }
 
-
   const db = getDb();
 
   if (!db) {
-    throw new Error(
-      "لم يتم تهيئة Supabase"
-    );
+    throw new Error("لم يتم تهيئة Supabase");
   }
 
-
-  const extension =
-    (
-      file.name
-        .split(".")
-        .pop() ||
-      "jpg"
-    ).toLowerCase();
-
+  const extension = (
+    file.name.split(".").pop() || "jpg"
+  ).toLowerCase();
 
   const filePath =
     `${crypto.randomUUID()}.${extension}`;
 
-
-  const {
-    error
-  } =
-    await db.storage
-      .from("product-images")
-      .upload(
-        filePath,
-        file,
-        {
-          upsert: false,
-
-          contentType:
-            file.type ||
-            "image/jpeg"
-        }
-      );
-
+  const { error } = await db.storage
+    .from("product-images")
+    .upload(
+      filePath,
+      file,
+      {
+        upsert: false,
+        contentType:
+          file.type || "image/jpeg"
+      }
+    );
 
   if (error) {
     throw error;
   }
 
-
-  const {
-    data
-  } =
-    db.storage
-      .from("product-images")
-      .getPublicUrl(
-        filePath
-      );
-
+  const { data } = db.storage
+    .from("product-images")
+    .getPublicUrl(filePath);
 
   return data.publicUrl;
 }
-
 
 // ==================================================
 // إظهار لوحة التحكم
 // ==================================================
 
 function showPanel() {
-
   document
     .getElementById("loginBox")
-    ?.classList.add(
-      "hidden"
-    );
-
+    ?.classList.add("hidden");
 
   document
     .getElementById("adminPanel")
-    ?.classList.remove(
-      "hidden"
-    );
-
+    ?.classList.remove("hidden");
 
   renderAdminProducts();
 }
-
 
 // ==================================================
 // تسجيل الدخول
 // ==================================================
 
 async function login() {
-
   const emailElement =
-    document.getElementById(
-      "adminEmail"
-    );
-
+    document.getElementById("adminEmail");
 
   const passwordElement =
-    document.getElementById(
-      "adminPassword"
-    );
-
+    document.getElementById("adminPassword");
 
   const errorBox =
-    document.getElementById(
-      "loginError"
-    );
+    document.getElementById("loginError");
 
-
-  if (
-    !emailElement ||
-    !passwordElement
-  ) {
+  if (!emailElement || !passwordElement) {
     return;
   }
-
 
   const email =
     emailElement.value.trim();
 
-
   const password =
     passwordElement.value;
-
 
   if (errorBox) {
     errorBox.textContent = "";
   }
 
-
   const db = getDb();
 
-
   if (!db) {
-
     if (errorBox) {
-
       errorBox.textContent =
         "خطأ في الاتصال بقاعدة البيانات. تأكد من تحميل config.js.";
-
     }
 
     return;
   }
 
-
   try {
-
-    // تسجيل الدخول
     const {
       data,
       error
-    } =
-      await db.auth
-        .signInWithPassword({
-          email,
-          password
-        });
-
+    } = await db.auth.signInWithPassword({
+      email,
+      password
+    });
 
     if (error) {
-
       if (errorBox) {
         errorBox.textContent =
           "بيانات الدخول غير صحيحة.";
@@ -537,61 +427,47 @@ async function login() {
       return;
     }
 
-
-    // التحقق من أن المستخدم أدمن
     const {
       data: adminRow,
       error: adminError
-    } =
-      await db
-        .from("admin_users")
-        .select("user_id")
-        .eq(
-          "user_id",
-          data.user.id
-        )
-        .maybeSingle();
-
+    } = await db
+      .from("admin_users")
+      .select("user_id")
+      .eq(
+        "user_id",
+        data.user.id
+      )
+      .maybeSingle();
 
     if (adminError) {
       throw adminError;
     }
 
-
     if (!adminRow) {
-
       await db.auth.signOut();
 
-
       if (errorBox) {
-
         errorBox.textContent =
           "هذا الحساب غير مخول لإدارة المتجر.";
-
       }
 
       return;
     }
 
-
     currentUser =
       data.user;
 
-
     products =
       await loadProducts();
-
 
     // ==================================================
     // زرع المنتجات الافتراضية فقط إذا كانت القاعدة فارغة
     // ==================================================
 
     if (!products.length) {
-
       const seed =
         defaultProducts.map(
           (product) => ({
-
             name:
               product.name,
 
@@ -616,38 +492,29 @@ async function login() {
             image:
               product.image,
 
-            // مهم جدًا:
-            // المنتجات الافتراضية ليست "وصل حديثًا"
             new_arrival:
               false,
 
-            // وليست عروضًا حصرية
             exclusive_offer:
               false
-
           })
         );
-
 
       const {
         data: seededData,
         error: seedError
-      } =
-        await db
-          .from("products")
-          .insert(seed)
-          .select("*");
-
+      } = await db
+        .from("products")
+        .insert(seed)
+        .select("*");
 
       if (seedError) {
         throw seedError;
       }
 
-
       products =
         (seededData || []).map(
           (product) => ({
-
             ...product,
 
             categoryName:
@@ -658,41 +525,32 @@ async function login() {
 
             exclusiveOffer:
               product.exclusive_offer === true
-
           })
         );
     }
 
-
     showPanel();
 
   } catch (error) {
-
     console.error(
       "خطأ تسجيل الدخول:",
       error
     );
 
-
     if (errorBox) {
-
       errorBox.textContent =
         "تعذر تحميل المنتجات. تأكد من الجداول والصلاحيات.";
-
     }
-
 
     await db.auth.signOut();
   }
 }
-
 
 // ==================================================
 // تسجيل الخروج
 // ==================================================
 
 async function logout() {
-
   const db = getDb();
 
   if (db?.auth) {
@@ -702,42 +560,29 @@ async function logout() {
   location.reload();
 }
 
-
 // ==================================================
 // حفظ منتج
 // ==================================================
 
 async function saveProduct(event) {
-
   event.preventDefault();
 
-
   const editId =
-    document.getElementById(
-      "editId"
-    ).value;
-
+    document.getElementById("editId").value;
 
   const existing =
     editId
       ? products.find(
           (product) =>
-            product.id ===
-            Number(editId)
+            product.id === Number(editId)
         )
       : null;
 
-
   try {
-
     const imageInput =
-      document.getElementById(
-        "productImage"
-      );
-
+      document.getElementById("productImage");
 
     let uploadedImage = "";
-
 
     // إذا اختار المستخدم صورة جديدة
     if (
@@ -745,135 +590,102 @@ async function saveProduct(event) {
       imageInput.files &&
       imageInput.files.length
     ) {
-
       uploadedImage =
         await uploadImage(
           imageInput.files[0]
         );
-
     }
-
 
     const category =
       document.getElementById(
         "productCategory"
       ).value;
 
-
     const data = {
-
       name:
-        document
-          .getElementById(
-            "productName"
-          )
-          .value
-          .trim(),
+        document.getElementById(
+          "productName"
+        ).value.trim(),
 
       category:
-
         category,
 
       categoryName:
-
-        categoryName(
-          category
-        ),
+        categoryName(category),
 
       price:
-
         Number(
-          document
-            .getElementById(
-              "productPrice"
-            )
-            .value
+          document.getElementById(
+            "productPrice"
+          ).value
         ),
 
       stock:
-
         Number(
-          document
-            .getElementById(
-              "productStock"
-            )
-            .value
+          document.getElementById(
+            "productStock"
+          ).value
         ),
 
+      // ==================================================
+      // التعديل:
+      // يقبل الفاصلة العربية والفاصلة الإنجليزية
+      // ==================================================
       sizes:
-
-        document
-          .getElementById(
-            "productSizes"
-          )
-          .value
-          .split(",")
+        document.getElementById(
+          "productSizes"
+        ).value
+          .split(/[,،]/)
           .map(
             (value) =>
               value.trim()
           )
           .filter(Boolean),
 
+      // ==================================================
+      // التعديل:
+      // يقبل الفاصلة العربية والفاصلة الإنجليزية
+      // ==================================================
       colors:
-
-        document
-          .getElementById(
-            "productColors"
-          )
-          .value
-          .split(",")
+        document.getElementById(
+          "productColors"
+        ).value
+          .split(/[,،]/)
           .map(
             (value) =>
               value.trim()
           )
           .filter(Boolean),
 
-
-      // الحالة الحالية الحقيقية
       newArrival:
+        document.getElementById(
+          "productNewArrival"
+        ).checked === true,
 
-        document
-          .getElementById(
-            "productNewArrival"
-          )
-          .checked === true,
-
-
-      // الحالة الحالية الحقيقية
       exclusiveOffer:
-
-        document
-          .getElementById(
-            "productExclusiveOffer"
-          )
-          .checked === true,
-
+        document.getElementById(
+          "productExclusiveOffer"
+        ).checked === true,
 
       // عند تعديل المنتج بدون صورة جديدة
       // نحتفظ بالصورة القديمة
       image:
-
         uploadedImage ||
         existing?.image ||
         ""
-
     };
 
-
+    // ==================================================
     // التحقق من البيانات
+    // ==================================================
 
     if (
       !data.name ||
-      !Number.isFinite(
-        data.price
-      ) ||
+      !Number.isFinite(data.price) ||
       data.price < 0 ||
-      !Number.isFinite(
-        data.stock
-      ) ||
+      !Number.isFinite(data.stock) ||
       data.stock < 0
     ) {
-
       alert(
         "يرجى إدخال بيانات صحيحة."
       );
@@ -881,35 +693,28 @@ async function saveProduct(event) {
       return;
     }
 
-
     await saveProductToDb(
       data,
       editId
     );
 
-
     // إعادة تحميل البيانات من Supabase
     products =
       await loadProducts();
-
 
     resetForm();
 
     renderAdminProducts();
 
-
     alert(
       "تم حفظ المنتج بنجاح."
     );
 
-
   } catch (error) {
-
     console.error(
       "خطأ حفظ المنتج:",
       error
     );
-
 
     alert(
       "تعذر حفظ المنتج. تأكد من Storage والصلاحيات."
@@ -917,130 +722,87 @@ async function saveProduct(event) {
   }
 }
 
-
 // ==================================================
 // تعديل منتج
 // ==================================================
 
 function editProduct(id) {
-
   const product =
     products.find(
       (item) =>
         item.id === id
     );
 
-
   if (!product) {
     return;
   }
 
-
   document
-    .getElementById(
-      "formTitle"
-    ).textContent =
+    .getElementById("formTitle")
+    .textContent =
       "تعديل المنتج";
 
-
   document
-    .getElementById(
-      "editId"
-    ).value =
+    .getElementById("editId")
+    .value =
       product.id;
 
-
   document
-    .getElementById(
-      "productName"
-    ).value =
+    .getElementById("productName")
+    .value =
       product.name || "";
 
+  document
+    .getElementById("productCategory")
+    .value =
+      product.category || "clothes";
 
   document
-    .getElementById(
-      "productCategory"
-    ).value =
-      product.category ||
-      "clothes";
-
-
-  document
-    .getElementById(
-      "productPrice"
-    ).value =
+    .getElementById("productPrice")
+    .value =
       product.price ?? "";
 
-
   document
-    .getElementById(
-      "productStock"
-    ).value =
+    .getElementById("productStock")
+    .value =
       product.stock ?? "";
 
+  document
+    .getElementById("productSizes")
+    .value =
+      (product.sizes || []).join(",");
 
   document
-    .getElementById(
-      "productSizes"
-    ).value =
-      (
-        product.sizes || []
-      ).join(",");
+    .getElementById("productColors")
+    .value =
+      (product.colors || []).join(",");
 
-
+  // true فقط تعني وصل حديثًا
   document
-    .getElementById(
-      "productColors"
-    ).value =
-      (
-        product.colors || []
-      ).join(",");
-
-
-  // ==================================================
-  // الإصلاح المهم
-  // ==================================================
-  // لا نستخدم:
-  // product.newArrival !== false
-  //
-  // لأن ذلك يجعل null أو undefined
-  // يعتبر "وصل حديثًا".
-  //
-  // نستخدم true فقط.
-  // ==================================================
-
-  document
-    .getElementById(
-      "productNewArrival"
-    ).checked =
+    .getElementById("productNewArrival")
+    .checked =
       product.newArrival === true;
 
-
+  // true فقط تعني عرض حصري
   document
-    .getElementById(
-      "productExclusiveOffer"
-    ).checked =
+    .getElementById("productExclusiveOffer")
+    .checked =
       product.exclusiveOffer === true;
-
 
   // لا نحذف الصورة القديمة عند التعديل
   document
-    .getElementById(
-      "productImage"
-    ).value = "";
-
+    .getElementById("productImage")
+    .value = "";
 
   const cancelButton =
     document.getElementById(
       "cancelEditBtn"
     );
 
-
   if (cancelButton) {
     cancelButton.style.display =
       "inline-block";
   }
-
 
   window.scrollTo({
     top: 0,
@@ -1048,57 +810,42 @@ function editProduct(id) {
   });
 }
 
-
 // ==================================================
 // حذف المنتج
 // ==================================================
 
 async function deleteProduct(id) {
-
   const product =
     products.find(
       (item) =>
         item.id === id
     );
 
-
   if (!product) {
     return;
   }
-
 
   const confirmed =
     confirm(
       `هل تريد حذف "${product.name}"؟`
     );
 
-
   if (!confirmed) {
     return;
   }
 
-
   try {
-
     const db = getDb();
 
-
-    const {
-      error
-    } =
+    const { error } =
       await db
         .from("products")
         .delete()
-        .eq(
-          "id",
-          id
-        );
-
+        .eq("id", id);
 
     if (error) {
       throw error;
     }
-
 
     products =
       products.filter(
@@ -1106,17 +853,13 @@ async function deleteProduct(id) {
           item.id !== id
       );
 
-
     renderAdminProducts();
 
-
   } catch (error) {
-
     console.error(
       "خطأ حذف المنتج:",
       error
     );
-
 
     alert(
       "تعذر حذف المنتج."
@@ -1124,149 +867,109 @@ async function deleteProduct(id) {
   }
 }
 
-
 // ==================================================
 // تبديل حالة العرض الحصري
 // ==================================================
 
 async function toggleExclusiveOffer(id) {
-
   const product =
     products.find(
       (item) =>
         item.id === id
     );
 
-
   if (!product) {
     return;
   }
 
-
   try {
-
     const db = getDb();
-
 
     const newValue =
       product.exclusiveOffer !== true;
 
-
-    const {
-      error
-    } =
+    const { error } =
       await db
         .from("products")
         .update({
-
           exclusive_offer:
             newValue,
 
           updated_at:
             new Date()
               .toISOString()
-
         })
-        .eq(
-          "id",
-          id
-        );
-
+        .eq("id", id);
 
     if (error) {
       throw error;
     }
 
-
     products =
       await loadProducts();
 
-
     renderAdminProducts();
 
-
   } catch (error) {
-
     console.error(
       "خطأ تحديث العرض:",
       error
     );
-
 
     alert(
       "تعذر تحديث المنتج."
     );
   }
 }
-
 
 // ==================================================
 // تبديل حالة وصل حديثًا
 // ==================================================
 
 async function toggleNewArrival(id) {
-
   const product =
     products.find(
       (item) =>
         item.id === id
     );
 
-
   if (!product) {
     return;
   }
 
-
   try {
-
     const db = getDb();
-
 
     const newValue =
       product.newArrival !== true;
 
-
-    const {
-      error
-    } =
+    const { error } =
       await db
         .from("products")
         .update({
-
           new_arrival:
             newValue,
 
           updated_at:
             new Date()
               .toISOString()
-
         })
-        .eq(
-          "id",
-          id
-        );
-
+        .eq("id", id);
 
     if (error) {
       throw error;
     }
 
-
     products =
       await loadProducts();
 
-
     renderAdminProducts();
 
-
   } catch (error) {
-
     console.error(
       "خطأ تحديث وصل حديثًا:",
       error
     );
-
 
     alert(
       "تعذر تحديث المنتج."
@@ -1274,140 +977,106 @@ async function toggleNewArrival(id) {
   }
 }
 
-
 // ==================================================
 // إعادة نموذج المنتج
 // ==================================================
 
 function resetForm() {
-
   const form =
     document.getElementById(
       "productForm"
     );
 
-
   if (form) {
     form.reset();
   }
-
 
   const editId =
     document.getElementById(
       "editId"
     );
 
-
   if (editId) {
     editId.value = "";
   }
-
 
   const formTitle =
     document.getElementById(
       "formTitle"
     );
 
-
   if (formTitle) {
-
     formTitle.textContent =
       "إضافة منتج جديد";
-
   }
-
 
   const cancelButton =
     document.getElementById(
       "cancelEditBtn"
     );
 
-
   if (cancelButton) {
-
     cancelButton.style.display =
       "none";
-
   }
 }
-
 
 // ==================================================
 // عرض المنتجات في لوحة الأدمن
 // ==================================================
 
 function renderAdminProducts() {
-
   const container =
     document.getElementById(
       "adminProducts"
     );
 
-
   if (!container) {
     return;
   }
 
-
   let list = [];
-
 
   // جميع المنتجات
   if (
-    selectedCategory ===
-    "all"
+    selectedCategory === "all"
   ) {
-
     list = products;
-
   }
-
 
   // وصل حديثًا
   else if (
-    selectedCategory ===
-    "new"
+    selectedCategory === "new"
   ) {
-
     list =
       products.filter(
         (product) =>
           product.newArrival === true
       );
-
   }
-
 
   // العروض الحصرية
   else if (
-    selectedCategory ===
-    "exclusive"
+    selectedCategory === "exclusive"
   ) {
-
     list =
       products.filter(
         (product) =>
           product.exclusiveOffer === true
       );
-
   }
-
 
   // الأقسام العادية
   else {
-
     list =
       products.filter(
         (product) =>
           product.category ===
           selectedCategory
       );
-
   }
 
-
   if (!list.length) {
-
     container.innerHTML = `
       <p
         style="
@@ -1423,17 +1092,14 @@ function renderAdminProducts() {
     return;
   }
 
-
   container.innerHTML =
     list
       .map(
         (product) => `
-
           <article class="admin-product">
 
             ${
               product.image
-
                 ? `
                   <img
                     src="${escapeHtml(
@@ -1442,16 +1108,15 @@ function renderAdminProducts() {
                     alt="${escapeHtml(
                       product.name
                     )}"
+                    loading="lazy"
                   >
                 `
-
                 : `
                   <div class="no-img">
                     ✦
                   </div>
                 `
             }
-
 
             <div class="admin-product-info">
 
@@ -1460,7 +1125,6 @@ function renderAdminProducts() {
                   product.name
                 )}
               </h3>
-
 
               <p>
                 ${escapeHtml(
@@ -1471,9 +1135,7 @@ function renderAdminProducts() {
                 )}
               </p>
 
-
               <p>
-
                 ${
                   product.newArrival === true
                     ? "✓ وصل حديثًا"
@@ -1485,9 +1147,7 @@ function renderAdminProducts() {
                     ? " ✓ عرض حصري"
                     : ""
                 }
-
               </p>
-
 
               <p>
                 السعر:
@@ -1504,7 +1164,6 @@ function renderAdminProducts() {
                 </strong>
               </p>
 
-
               <p>
                 المقاسات:
                 ${
@@ -1516,7 +1175,6 @@ function renderAdminProducts() {
                 }
               </p>
 
-
               <p>
                 الألوان:
                 ${
@@ -1527,7 +1185,6 @@ function renderAdminProducts() {
                   "—"
                 }
               </p>
-
 
               <div
                 class="admin-product-actions"
@@ -1542,7 +1199,6 @@ function renderAdminProducts() {
                   تعديل
                 </button>
 
-
                 <button
                   type="button"
                   onclick="toggleExclusiveOffer(
@@ -1556,7 +1212,6 @@ function renderAdminProducts() {
                   }
                 </button>
 
-
                 <button
                   type="button"
                   onclick="deleteProduct(
@@ -1568,7 +1223,6 @@ function renderAdminProducts() {
                 </button>
 
               </div>
-
 
               <div
                 class="admin-product-actions"
@@ -1592,12 +1246,10 @@ function renderAdminProducts() {
             </div>
 
           </article>
-
         `
       )
       .join("");
 }
-
 
 // ==================================================
 // تشغيل لوحة الأدمن
@@ -1609,69 +1261,51 @@ document.addEventListener(
 
     // زر تسجيل الدخول
     document
-      .getElementById(
-        "loginBtn"
-      )
+      .getElementById("loginBtn")
       ?.addEventListener(
         "click",
         login
       );
 
-
     // الضغط Enter في كلمة المرور
     document
-      .getElementById(
-        "adminPassword"
-      )
+      .getElementById("adminPassword")
       ?.addEventListener(
         "keydown",
         (event) => {
 
           if (
-            event.key ===
-            "Enter"
+            event.key === "Enter"
           ) {
-
             login();
-
           }
 
         }
       );
 
-
     // تسجيل الخروج
     document
-      .getElementById(
-        "logoutBtn"
-      )
+      .getElementById("logoutBtn")
       ?.addEventListener(
         "click",
         logout
       );
 
-
     // نموذج المنتج
     document
-      .getElementById(
-        "productForm"
-      )
+      .getElementById("productForm")
       ?.addEventListener(
         "submit",
         saveProduct
       );
 
-
     // إلغاء التعديل
     document
-      .getElementById(
-        "cancelEditBtn"
-      )
+      .getElementById("cancelEditBtn")
       ?.addEventListener(
         "click",
         resetForm
       );
-
 
     // ==================================================
     // تبويبات الأقسام
@@ -1691,7 +1325,6 @@ document.addEventListener(
               selectedCategory =
                 button.dataset.category;
 
-
               document
                 .querySelectorAll(
                   ".category-tab"
@@ -1703,11 +1336,9 @@ document.addEventListener(
                     )
                 );
 
-
               button.classList.add(
                 "active"
               );
-
 
               renderAdminProducts();
 
@@ -1717,7 +1348,6 @@ document.addEventListener(
         }
       );
 
-
     // ==================================================
     // التحقق من الجلسة الحالية
     // ==================================================
@@ -1725,10 +1355,7 @@ document.addEventListener(
     const db =
       getDb();
 
-
-    if (
-      db?.auth
-    ) {
+    if (db?.auth) {
 
       try {
 
@@ -1736,7 +1363,6 @@ document.addEventListener(
           data
         } =
           await db.auth.getSession();
-
 
         if (
           data?.session
@@ -1747,34 +1373,25 @@ document.addEventListener(
             error
           } =
             await db
-              .from(
-                "admin_users"
-              )
-              .select(
-                "user_id"
-              )
+              .from("admin_users")
+              .select("user_id")
               .eq(
                 "user_id",
-                data.session
-                  .user.id
+                data.session.user.id
               )
               .maybeSingle();
-
 
           if (error) {
             throw error;
           }
-
 
           if (adminRow) {
 
             currentUser =
               data.session.user;
 
-
             products =
               await loadProducts();
-
 
             showPanel();
 
